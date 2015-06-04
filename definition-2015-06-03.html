@@ -1,0 +1,1309 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>Multidimensional Quality Metrics Definition</title>
+	<link rel="stylesheet" type="text/css" href="http://www.qt21.eu/mqm-definition/mqm.css">
+</head>
+<body>
+	<h1>Multidimensional Quality Metrics (MQM) Definition</h1>
+	<ul>
+		<li>This version: 0.9.1 (2015-06-03)</li>
+		<li>Current version as of 2015 June 04: 0.9.1  (<a href="http://www.qt21.eu/mqm-definition/definition-2015-06-03.html">http://www.qt21.eu/mqm-definition/definition-2015-06-03.html</a>)</li>
+		<li>Latest version: <a href="http://www.qt21.eu/mqm-definition/">http://www.qt21.eu/mqm-definition/</a></li>
+		<li>Previous Version: <a href="http://www.qt21.eu/mqm-definition/definition-2015-05-27.html">http://www.qt21.eu/mqm-definition/definition-2015-07-27.html</a> (version 0.9.0, 2015-05-27)</li>
+	</ul>
+	<h2>Copyright</h2>
+	<p>Copyright ©2014, Deutsches Forschungszentrum für Künstliche Intelligenz GmbH / German Research Center for Artificial Intelligence (DFKI)
+		<br /><a rel="license" href="http://creativecommons.org/licenses/by-nd/4.0/deed.en_US"><img alt="Creative Commons License" style="border-width:0" src="http://i.creativecommons.org/l/by-nd/4.0/88x31.png" /></a><br />This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nd/4.0/deed.en_US">Creative Commons Attribution-NoDerivatives 4.0 International License</a>.</p>
+	<h2>Editor</h2>
+	<ul>
+		<li>Arle Lommel (DFKI)</li>
+	</ul>
+	<h2>Contributors</h2>
+	<ul>
+		<li>Aljoscha Burchardt (DFKI)</li>
+		<li>Kim Harris (text&amp;form)</li>
+		<li>Alan K. Melby (LTAC Global)</li>
+		<li>Hans Uszkoreit (DFKI)</li>
+		<li>Attila Görög (TAUS)</li>
+		<li>Serge Gladkoff (Logrus)</li>
+		<li>Leonid Glazychev (Logrus)</li>
+	</ul>
+	<h2>Document status</h2>
+	<p>This document is a draft of the MQM specification. It is subject to frequent and substantial revision and should not be relied upon for implementation.</p>
+	<h2>Feedback</h2>
+	<p>Feedback on this document should be submitted to <a href="mailto:info@qt21.eu">info@qt21.eu</a>.</p>
+	<h2>Overview</h2>
+	<p>This document defines the Multidimensional Quality Metrics (MQM) framework. It contains a description of the issue types, scoring mechanism, and markup, as well as informative mappings to various quality systems. MQM provides a flexible framework for defining custom metrics for the assessment of translation quality. These metrics may be considered to be within the same “family” as they draw on a common inventory of values for data categories and a common structure. MQM supports multiple levels of granularity and provides a way to describe translation-oriented quality assessment systems, exchange information between them, and embed that information in XML or HTML5 documents.</p>
+<!--	<div style="background-color:yellow;padding:12px;">
+		<h3>Before you begin</h3>
+		<p>It is <em>strongly</em> recommended that readers who are not already familiar with MQM review the presentation online at <a href="http://www.qt21.eu/downloads/MQM_JIAMCATT-2014-04-23-handout.pdf">http://www.qt21.eu/downloads/MQM_JIAMCATT-2014-04-23-handout.pdf</a> prior to reviewing this specification. This presentation provides an overview of MQM functionality and philosophy that will assist readers of this technical document. In addition, a two-page overview can be downloaded from <a href="http://www.qt21.eu/downloads/MQM-overview-2015-03-07.pdf">http://www.qt21.eu/downloads/MQM-overview-2015-03-07.pdf</a></p>
+	</div>-->
+	<h2>Table of Contents</h2>
+	<p class="toc2"><a href="#introduction">1. Introduction (non-normative)</a></p>
+	<p class="toc3"><a href="#scope">1.1. Scope</a></p>
+	<p class="toc3"><a href="#quality-terms">1.2. Quality assessment, quality assurance, and quality control</a></p>
+	<p class="toc2"><a href="#terms">2. Terms and definitions (normative)</a></p>
+	<p class="toc2"><a href="#principles">3. Principles (non-normative)</a></p>
+	<p class="toc3"><a href="#fairness">3.1. Fairness</a></p>
+	<p class="toc3"><a href="#flexibility">3.2. Flexibility</a></p>
+	<p class="toc2"><a href="#conformance">4. Conformance (normative)</a></p>
+	<p class="toc2"><a href="#issue_types">5. Issue types (normative)</a></p>
+	<p class="toc3"><a href="#mqm-issues">5.1. MQM issues</a></p>
+	<p class="toc4"><a href="#issue-list">5.1.1. List of MQM issues</a></p>
+	<p class="toc4"><a href="#high-level-structure">5.1.2. High-level structure</a></p>
+	<p class="toc3"><a href="#mqm-core">5.2. MQM Core</a></p>
+	<p class="toc3"><a href="#user-extention">5.3. User extension</a></p>
+	<p class="toc3"><a href="#other-metrics">5.4. Integration with other metrics</a></p>
+	<p class="toc2"><a href="#mqm_markup">6. Markup (normative)</a></p>
+	<p class="toc3"><a href="#mqm_metric_description">6.1. MQM metrics description</a></p>
+	<p class="toc3"><a href="#mqm-inline-markup">6.2. MQM inline attributes</a></p>
+	<p class="toc3"><a href="#mqm-inline-elements">6.3. MQM inline elements</a></p>
+	<p class="toc2"><a href="#relationship-its">7. Relationship to ITS 2.0 (normative)</a></p>
+	<p class="toc3"><a href="#mqm-to-its">7.1. MQM-to-ITS mapping</a></p>
+	<p class="toc3"><a href="#its-to-mqm">7.2. ITS-to-MQM mapping</a></p>
+	<p class="toc2"><a href="#scoring">8. Scoring (non-normative)</a></p>
+	<p class="toc3"><a href="#default-values">8.1. Default severity levels for error-count metrics</a></p>
+	<p class="toc3"><a href="#scoring-algorithm">8.2. Scoring algorithm</a></p>
+	<p class="toc3"><a href="#old-default-values">8.3. Default severity multipliers from versions earlier than 0.3.0 (deprecated)</a></p>
+	<p class="toc2"><a href="#creating-mqm-metrics">9. Creating MQM metrics (non-normative)</a></p>
+	<p class="toc3"><a href="#selection-example">9.1. Example of defining a metric</a></p>
+	<p class="toc3"><a href="#parameters">9.2. Definition of MQM parameters</a></p>
+	<p class="toc3"><a href="#error-count">9.3. Analytic metrics</a></p>
+	<p class="toc3"><a href="#holistic">9.4. Holistic metrics</a></p>
+	<p class="toc2"><a href="#dqf-mapping">10. TAUS DQF subset (non-normative)</a></p>
+	<p class="toc2"><a href="#mappings">11. Mappings of existing metrics to MQM (non-normative)</a></p>
+	<p class="toc3"><a href="#saej2450-mapping">11.1. SAE J2450</a></p>
+	<p class="toc2"><a href="#acknowledgements">12. Acknowledgements</a></p>
+	<p class="toc2"><a href="#history">13. Previous versions (non-normative)</a></p>
+
+
+	<div>
+		<h2 id="introduction">1. Introduction (non-normative)</h2>
+		<p>Multidimensional Quality Metrics (MQM) provides a framework for describing and defining quality metrics used to assess the quality of translated texts and to identify specific issues in those texts. It provides a systematic framework to describe quality metrics based on the identification of textual features. This framework consists of the following items:</p>
+		<ul>
+			<li>A vocabulary for categorizing quality issues. This vocabulary was based on an extensive examination of existing translation quality metrics. (<a href="#issue_types">3. Issue types (normative)</a>)</li>
+			<li>A scoring mechanism to arrive at quality scores based on either counts of errors or actual error annotations. (<a href="scoring">6. Scoring (normative)</a>)</li>
+			<li>Markup (<a href="#mqm_markup">7. Markup (normative)</a>) including the following:
+				<ul>
+					<li>A formal XML mechanism for declaring/describing quality metrics. This vocabulary allows implementers and users to precisely describe metrics and can be used to emulated existing metrics in MQM format. (<a href="#mqm_metric_description">7.1. MQM metrics description</a>)</li>
+					<li>A set of attributes in the <code>mqm:</code> namespace that can be used with XML or HTML5 (with appropriate adjustments to the HTML5 format) to embed MQM data in these file formats. These attributes are designed to work with Internationalization Tag Set 2.0 (ITS 2.0) localization quality metadata (<a href="#mqm-inline-markup">7.2. MQM inline attributes</a>)</li>
+					<li>A set of elements in the <code>mqm:</code> namespace that can be used to insert MQM data into XML files when existing elements do not meet requirements. (<a href="#mqm-inline-elements">7.3. MQM inline elements</a>)</li>
+				</ul>
+			<li>A set of guidelines for selecting issues based on the ISO/TS-11669 specification (<a href="#selecting-issues">8. Guidelines for selecting issues for use in a metric (non-normative)</a>)</li>
+			<li>A set of informative mappings from existing legacy metrics to MQM that may prove useful for implementers (<a href="#mappings">10. Mappings of existing metrics to MQM (non-normative)</a>)</li>
+		</ul>
+		<p>MQM does not define a single metric intended for use with all translations. Instead it adopts the “functionalist” approach that quality can be defined by how well a text meets its communicative purpose. In practical terms, this statement means that MQM is a framework for defining a family of related metrics.</p>
+		<p>MQM is intended to provide a set of criteria which can be used to assess the quality of translations. While these criteria are intended to promote objectivity in assessment, a certain degree of subjectivity is inherent in assessing translation quality and MQM may not be able to distinguish between high-end translations that meet all specifications (other than to assure that they do, in fact, meet those specifications).</p> 
+		<div>
+			<h3 id="scope">1.1. Scope</h3>
+			<p>This document applies primarily to quality assessment of translated content (and thus to the output of translation systems). It does not apply to assessment of translation processes or projects. Here “translated content” is to be understood broadly to include text, graphics, and any other content which may be translated or adapted for multiple locales (i.e., a combination of language and geographical region). MQM applies to the translation industry, interpreted broadly to include localization (of software and other technical content) and “transcreation” (creative adaptation of content for target audiences and purposes, including but not limited to, adaptation of marketing materials and multi-media content), as well to various types of purely textual translation.</p>
+			<p>MQM is useful for assessing <em>verifiable</em> qualities of translations. It is not intended to address purely subjective criteria (such as “artistry” or “elegance”) that may be of key importance in some circumstances. Rather, it provides a functional approach to quality that seeks to see whether a translation meets specifications and to identify aspects that may fall short of expectations.</p>
+			<p>MQM is designed to apply to (monolingual) source texts as well as translated target texts. MQM’s <span class="generated-issue-name"><em>Design <a href="issues-list-2015-05-27.html#design" target="_blank">(<code>design</code></a>)</em></span>, <span class="generated-issue-name"><em>Fluency <a href="issues-list-2015-05-27.html#fluency" target="_blank">(<code>fluency</code></a>)</em></span>, <span class="generated-issue-name"><em>Style <a href="issues-list-2015-05-27.html#style" target="_blank">(<code>style</code></a>)</em></span>, <span class="generated-issue-name"><em>Terminology <a href="issues-list-2015-05-27.html#terminology" target="_blank">(<code>terminology</code></a>)</em></span>, and <span class="generated-issue-name"><em>Verity <a href="issues-list-2015-05-27.html#verity" target="_blank">(<code>verity</code></a>)</em></span> branches apply equally to source texts and target texts (although some specific issues within them might apply more to one or the other). The <span class="generated-issue-name"><em>Accuracy <a href="issues-list-2015-05-27.html#accuracy" target="_blank">(<code>accuracy</code></a>)</em></span> dimension is specific to translated texts (or, more properly, to the relationship between source and target text). While <span class="generated-issue-name"><em>Locale convention <a href="issues-list-2015-05-27.html#locale-convention" target="_blank">(<code>locale-convention</code></a>)</em></span> is more likely to apply to target texts, it can apply to source texts. And, finally, the <span class="generated-issue-name"><em>Internationalization <a href="issues-list-2015-05-27.html#internationalization" target="_blank">(<code>internationalization</code></a>)</em></span> dimension applies solely to source content (many of its issues correspond to specific faults in the target text that can be identified under <span class="generated-issue-name"><em>Locale convention <a href="issues-list-2015-05-27.html#locale-convention" target="_blank">(<code>locale-convention</code></a>)</em></span>).</p>
+		</div>
+		<div>
+			<h3 id="quality-terms">1.2. Quality assessment, quality assurance, and quality control</h3>
+			<p>Within the translation industry, three terms are used somewhat interchangeably to refer to quality activities: <em>quality assessment</em>, <em>quality assurance</em>, and <em>quality control</em>. However, within broader literature on quality these terms have distinct meanings and should be distinguished:</p>
+			<ul>
+				<li><strong>Quality assessment</strong> (sometimes considered synonymous with “quality evaluation”) is the measurement of the extent to which a product complies with quality specifications (see the <a href="#quality-def">definition of “quality”</a> below).</li>
+				<li><strong>Quality assurance</strong> refers to ways of preventing mistakes or defects in manufactured products and avoiding problems when delivering solutions or services to customers. Quality assurance relies on continual assessment of quality.</li>
+				<li><strong>Quality control</strong> is the process of checking whether manufactured products meet stated quality specifications. Quality control is a decision process based on the results of quality assessment.</li>
+			</ul>
+			<p>The focus of MQM is on quality assessment, which is essential to quality assurance and quality control. This document does not, however, specify or recommend particular quality assurance or quality control processes. (Note that within the translation industry there is widespread confusion between “quality assessment” and “quality assurance” within the localization industry, partially due to the adoption of the LISA Quality Assurance Model, which actually provided a model for quality assessment.)</p>
+		</div>
+	</div>
+
+	<div>
+		<h2 id="terms">2. Terms and definitions (normative)</h2>
+		<p>The following terms and definitions apply in this document.</p>
+		<dl>
+			<dt>Accuracy</dt>
+			<dd>The extent to which the informational content conveyed by a target text matches that of the source text.</dd>
+
+			<dt>Adequacy</dt>
+			<dd>Synonym for <em>Accuracy</em> commonly used in the context of assessing machine translation quality</dd>
+			
+			<dt>Analytic metric</dt>
+			<dd>A metric that functions by identifying precise locations of issues within a text and categorizing them (versus a <em>holistic metric</em>.</dd>
+			
+			<dt>Data category</dt>
+			<dd>An abstract concept for a particular type of information for describing translation quality metrics, such as an issue types, weights, and other aspects of a metric.</dd>
+			
+			<dt>Dimension</dt>
+			<dd>A high-level, translation-related aspect of the content that can be evaluated for adherence to specifications. In MQM, the dimensions are <span class="generated-issue-name"><em>Accuracy <a href="issues-list-2015-05-27.html#accuracy" target="_blank">(<code>accuracy</code></a>)</em></span>, <span class="generated-issue-name"><em>Design <a href="issues-list-2015-05-27.html#design" target="_blank">(<code>design</code></a>)</em></span>, <span class="generated-issue-name"><em>Fluency <a href="issues-list-2015-05-27.html#fluency" target="_blank">(<code>fluency</code></a>)</em></span>, <span class="generated-issue-name"><em>Internationalization <a href="issues-list-2015-05-27.html#internationalization" target="_blank">(<code>internationalization</code></a>)</em></span>, <span class="generated-issue-name"><em>Locale convention <a href="issues-list-2015-05-27.html#locale-convention" target="_blank">(<code>locale-convention</code></a>)</em></span>, <span class="generated-issue-name"><em>Style <a href="issues-list-2015-05-27.html#style" target="_blank">(<code>style</code></a>)</em></span>, <span class="generated-issue-name"><em>Terminology <a href="issues-list-2015-05-27.html#terminology" target="_blank">(<code>terminology</code></a>)</em></span>, and <span class="generated-issue-name"><em>Verity <a href="issues-list-2015-05-27.html#verity" target="_blank">(<code>verity</code></a>)</em></span>, plus <span class="generated-issue-name"><em>Compatibility (Deprecated) <a href="issues-list-2015-05-27.html#compatibility" target="_blank">(<code>compatibility</code></a>)</em></span> (contains deprecated issues from legacy metrics that do not deal with translation product quality per se) and <span class="generated-issue-name"><em>Other <a href="issues-list-2015-05-27.html#other" target="_blank">(<code>other</code></a>)</em></span>. Individual issue types represent aspects of these dimensions and each dimension can be used as an issue.</dd>
+		
+			<dt>Error</dt>
+			<dd>An error is a specific instance of an issue that has been verified to be incorrect.</dd>
+			
+			<dt>Error penalty</dt>
+			<dd>The points assessed against a text for each error in an analytic metric.</dd>
+			
+			<dt>Issue</dt>
+			<dd>As issue is a potential problem detected in content. (Note: The term <em>issue</em> as used in this document refers to any potential error detected in a text, even if it is determined not to be an <em>error</em>. For example, if an automated process finds that a term in the source does not appear to have been translated properly, it has identified an issue. If human examination finds that the term was translated improperly, it is an error. However, examination might also find that the issue was not an error because the linguistic structure in the translation dictated that the term be replaced by a pronoun, so the translation is correct. Since issues may be automatically detected or incorrectly identified, this document refers to <code>issues</code> in most contexts.)</dd>
+
+			<dt>Metric</dt>
+			<dd>As used in MQM, a quantitative measure of the degree to which a translated text meets quality requirements. An MQM metric consists of one or more issues against which the text is evaluated and an assessment method (holistic or analytic).</dd>
+			
+			<dt>Metric</dt>
+			<dd>A set of issue types used for assessing a translation. In general, metrics will include a scoring metric and weights for the issue types.</dd>
+			
+			<dt>Method</dt>
+			<dd>A specific way of measuring some aspect of translation quality, e.g., Analytic, Functional, Holistic, Task-based. Note that the method does not refer to the process or procedure for measuring quality, but rather the general level to which the metric applies.</dd>
+			
+			<dt>Parameter</dt>
+			<dd>An aspect of a translation that defines expectations concerning the translation product. For example, “target language/locale” is the parameter that states what language/locale the translated text should appear in.</dd>
+
+			<dt id="quality-def">Quality</dt>
+			<dd>Quality is the adherence of the text to appropriate specifications. In the case of translated texts, the following formulation applies:
+				<blockquote>A quality translation demonstrates required accuracy and fluency for the audience and purpose and complies with all other negotiated specifications, taking into account end-user needs.</blockquote>
+				For monolingual source texts, the formulation may be modified as follows:
+				<blockquote>A quality text demonstrates required fluency for the audience and purpose and complies with all other negotiated specifications, taking into account end-user needs.</blockquote>
+			</dd>
+			
+			<dt>Holistic</dt>
+			<dd>A metric based on one or more questions or statements, corresponding to issue types, that serve as the basis for evaluating the translation as a whole, along with definitions and examples to clarify the meaning of each statement or question, a scale of values on which to rate each item, and standards of excellence for specified performance levels.</dd>
+			
+			<dt>Severity</dt>
+			<dd>An indication of the how severe a particular instance of an issue is. Issues with higher severity have more impact on perceived quality of the text. The default MQM severity model has three levels: minor, major, and critical.</dd>
+			
+			<dt>Specifications</dt>
+			<dd>A description of the requirements for the translation, as defined by ASTM F2575-2014. MQM utilizes a subset of the full specifications defined in that specification.</dd>
+
+			<dt>Weight</dt>
+			<dd>A numerical indication of the how important a particular issue type is in overall quality assessment. The default weight for issues is 1.0. Higher numbers assign more importance to an issue type, while lower numbers assign a lower importance. A weight of 0 would indicate that an issue is checked but not counted in MQM scores. Weights serve as multipliers for error penalties in MQM scoring.</dd>
+		</dl>
+	</div>
+
+	<div>
+		<h2 id="principles">3. Principles (non-normative)</h2>
+		<div>
+			<h3 id="fairness">3.1. Fairness</h3>
+			<p>As noted above, MQM applies to both source and target texts (with different dimensions applying to them). The default MQM scoring method accordingly allows for users to assess source texts to obtain a quality score for source texts and, if both source and target are assessed, issues found in the source may be counted against penalties for issues in the target text, resulting in higher scores. While not all implementations or usages scenarios will examine the source or count problems in the source in favor of translators, this principle is intended to help ensure that translators are recognized and credited when they have to translate inferior source texts rather than being blamed for all problems, even those beyond their control.</p>
+		</div>
+		<div>
+			<h3 id="flexibility">3.2. Flexibility</h3>
+			<p>There are a number of ways to assess the quality of translations. Two primary methods are used in industry and academia:</p>
+			<ul>
+				<li><strong>Analytic</strong>. Analytic quality assessment methods focus on the identification of precise issues within the object being assessed, such as (for a translation) identification of specific mistranslations, spelling errors, etc.</li>
+				<li><strong>Holistic</strong>. Holistic assessment methods focus on overall characteristics of the object being assessed, such as (in the case of translated texts) reader impression, sentiment, clarity, accuracy, style, whether it enables a task to be completed, and so forth.</li>
+			</ul>
+			<p>MQM is ideally suited for implementation as an analytic metric. It is also easily adapted to serve as the basis for holistic assessments.</p>
+			<p>Rather than proposing a single metric for assessing all translations, MQM provides a flexible method for defining and declaring metrics that can be adapted to specific requirements. These requirements are generally stated in terms of a set of 12 “parameters” (see <a href="#parameters">Section 9.2. MQM parameters</a>), a subset of the translation parameters described in <a href="http://www.iso.org/iso/catalogue_detail.htm?csnumber=50687">ISO/TS 11669:2012: Translation projects -- General guidance</a> that focuses primarily on aspects of the translation product (rather than the project or process). Using these parameters to define requirements and expectations before translation allows users to create appropriate metrics before translation begins and provides translators with a clear view of the criteria for assessing their work.</p>
+			<p>In addition, metrics must support both simple and sophisticated requirements. Rather than proposing yet another metric with more detail, MQM provides a flexible catalog of defined issue types that can support any level of sophistication, from a simple metric with two categories to a complex one with thirty or forty. It also supports both holistic assessment (for quick acceptance testing) and error markup/counts for cases where detailed analysis is required.</p>
+		</div>
+	</div>
+
+	<div>
+		<h2 id="conformance">4. Conformance (normative)</h2>
+		<p>Conformance of a translation quality assessment metric with MQM is determined by the following criteria:</p>
+		<ul>
+			<li>The metric MUST use the MQM vocabulary of issue types (see <a href="#issue_types">Section 4. Issue types (normative)</a>.)</li>
+			<li>Any issue types used by the metric that are not contained in MQM MUST be defined as MQM user extensions (see <a href="#user-extention">Section 5.3. User extension</a>) at an appropriate place in the MQM hierarchy.</li>
+			<li>Custom issue types MUST NOT replace existing MQM issue types with the same semantics. (E.g., a metric that declared a “Not translated” custom issue type with the same meaning as <span class="generated-issue-name"><em>Untranslated <a href="issues-list-2015-05-27.html#untranslated" target="_blank">(<code>untranslated</code></a>)</em></span> would not conform to MQM.)</li>
+			<li>Metrics MAY use the a custom <code>displayName</code> to assign a non-default name to an issue type. (E.g, a metric could declare “Not translated” to be the display name for <span class="generated-issue-name"><em>Untranslated <a href="issues-list-2015-05-27.html#untranslated" target="_blank">(<code>untranslated</code></a>)</em></span>.) However, at least for English-language implementations, the use of the default MQM names is encouraged. In any cases where the different display name is uses, the MQM ID MUST be used to prevent confusion.</li>
+			<li>Metrics SHOULD use a declared MQM markup type (ITS 2.0-compatible) when possible for inline or standoff representation of annotated issues. However, in some instances such markup may not be possible (e.g., in non XML/HTML formats) or with tools that are used for counting errors but which do not provide inline markup.</li>
+			<li>MQM-compliant metrics SHOULD generally display their issues in the MQM hierarchy, but are not required to do so (e.g., an MQM-compliant metric with six issues might opt to display them as a flat list). If issues are displayed in a hierarchy, developers are strongly encouraged, but not required, to use the MQM hierarchy. (This provision exists because legacy metrics that have their own hierarchy may be represented in MQM.)
+		</ul>
+		<p>Note that the <em>only</em> required aspect is use of the MQM vocabulary, which MUST NOT be contradicted or overridden.</p>
+	</div>
+
+	<div>
+		<h2 id="issue_types">5. Issue types (normative)</h2>
+		<div>
+			<h3 id="mqm-issues">5.1. MQM issues</h3>
+			<h4 id="issue-list">5.1.1. List of MQM issues</h4>
+			<p>The full list of MQM issues is maintained in a <a href="issues-list-2015-05-27.html" target="_blank">separate document at issues-list-2015-05-27.html</a>.
+			<h4 id="high-level-structure">5.1.2. High-level structure</h4>
+			<p>At the top level, MQM is defined into major dimensions:</p>
+			<ul>
+				<li><span class="generated-issue-name"><em>Accuracy <a href="issues-list-2015-05-27.html#accuracy" target="_blank">(<code>accuracy</code></a>)</em></span>: Accuracy issues address the relationship of the target text to the source text and can be assessed only by considering this relationship. Changes in intended meaning, addition and omission of content, and similar issues are considered in it.</li>
+				<li><span class="generated-issue-name"><em>Design <a href="issues-list-2015-05-27.html#design" target="_blank">(<code>design</code></a>)</em></span>: Design includes issues related to the physical presentation of text, typically in a “rich text” or “markup” environment.</li>
+				<li><span class="generated-issue-name"><em>Fluency <a href="issues-list-2015-05-27.html#fluency" target="_blank">(<code>fluency</code></a>)</em></span>: Fluency includes those issues about the linguistic “well-formedness” of the text that can be assessed without regard to whether the text is a translation or not. Most Fluency issues apply equally to source and target texts.</li>
+				<li><span class="generated-issue-name"><em>Internationalization <a href="issues-list-2015-05-27.html#internationalization" target="_blank">(<code>internationalization</code></a>)</em></span>: Internationalization covers areas related to the preparation of the source content for subsequent translation or localization. Internationalization issues may be detected through problems found in the target (particularly from those included in <span class="generated-issue-name"><em>Locale convention <a href="issues-list-2015-05-27.html#locale-convention" target="_blank">(<code>locale-convention</code></a>)</em></span>, but an Internationalization audit is generally conducted separately from a general assessment of translation quality.</li>
+				<li><span class="generated-issue-name"><em>Locale convention <a href="issues-list-2015-05-27.html#locale-convention" target="_blank">(<code>locale-convention</code></a>)</em></span>: Issues in Locale convention relate to the formal compliance of content with locale-specific conventions, such as use of proper number formats. If content is otherwise correctly translated and fluent but violates specific locale expectations (as defined in the translation specifications), it is addressed in this dimension. This dimension does <em>not</em> cover issues related to whether the content itself is appropriate for the locale (these issues are covered under <span class="generated-issue-name"><em>Verity <a href="issues-list-2015-05-27.html#verity" target="_blank">(<code>verity</code></a>)</em></span>.</li>
+				<li><span class="generated-issue-name"><em>Style <a href="issues-list-2015-05-27.html#style" target="_blank">(<code>style</code></a>)</em></span>: Style issues relate to what is commonly known as “Style”, defined both formally (in style guides) and informally (e.g., a “light style” or an “engaging style”). These issues are closely related to <span class="generated-issue-name"><em>Fluency <a href="issues-list-2015-05-27.html#fluency" target="_blank">(<code>fluency</code></a>)</em></span>, but are often treated separately by tools and quality processes and so are grouped as a separate dimension in MQM.</li>
+				<li><span class="generated-issue-name"><em>Terminology <a href="issues-list-2015-05-27.html#terminology" target="_blank">(<code>terminology</code></a>)</em></span>: Terminology issues relate to the use of domain- or organization-specific terminology (i.e., the use of words to relate to specific concepts not considered part of general language). Adherence to specified terminology is widely considered an issue of central concern in both translation and content authoring. Issues in this branch should not be used for general language mistranslation (e.g., translations that would not be considered correct under reasonable circumstances), and should be reserved for issues related to terminology (e.g., a translation is reasonable but incorrect in the context of specific technical domain or for a particular organization).</li>
+				<li><span class="generated-issue-name"><em>Verity <a href="issues-list-2015-05-27.html#verity" target="_blank">(<code>verity</code></a>)</em></span>: Verity issues relate to the suitability of content for the target locale and audience. They do not relate to fluency or accuracy since content may be fluently written and accurately translated and still be inappropriate for the target locale or audience. For example, if a text translated for Germans in Germany refers to options available only in the UK, these portions will likely be problematic. For more details on Verity, see the discussion below.</li>
+				<li><span class="generated-issue-name"><em>Compatibility (Deprecated) <a href="issues-list-2015-05-27.html#compatibility" target="_blank">(<code>compatibility</code></a>)</em></span>: The Compatibility dimension includes issues taken from legacy metrics that are not considered appropriate for general use in MQM (because they are related to areas not covered by MQM, such as deadlines, software functionality, or physical production). They are included only for compatibility with these older metrics and should not be used for new MQM metrics.</li>
+				<li><span class="generated-issue-name"><em>Other <a href="issues-list-2015-05-27.html#other" target="_blank">(<code>other</code></a>)</em></span>: This dimension is used for issues which cannot be otherwise classified into a dimension of MQM. In cases where an unforeseen issue can be classified as belonging to a dimension, it should be classified in that dimension under the top level or using a custom issue type. In practice Other should be used extremely rarely.</li>
+			</ul>
+			<p>More information on the dimensions and their content can be found in the <a href="issues-list-2015-05-27.html" target="_blank">full list of MQM issues at issues-list-2015-05-27.html</a>
+		</div>
+
+		
+		<div>
+			<h3 id="mqm-core">5.2. MQM Core</h3>
+			<p>In order to simplify the application of MQM, MQM defines a smaller “Core” consisting of 20 issue types that represent the most common issues arising in quality assessment of translated texts. The Core represents a relatively high level of granularity suitable for many tasks. Where possible, users of MQM are encouraged to use issues from the Core to promote greater interoperability between systems.</p>
+			<p>The MQM Core can be graphically represented as follows (branches in gray italics represent major branches not included in the MQM core) (available <a href="http://www.qt21.eu/mqm-definition/images/2015-05-27/Core-2015-05-27.svg" target="_blank">here in SVG format</a>):</p>
+			<img src="http://www.qt21.eu/mqm-definition/images/2015-05-27/Core-2015-05-27.png" alt="MQM Core" />
+			<p>The 19 issues are defined in the MQM core as follows:</p>
+			<ul>
+				<li><span class="generated-issue-name"><em>Accuracy <a href="issues-list-2015-05-27.html#accuracy" target="_blank">(<code>accuracy</code></a>)</em></span>					<ul>
+						<li><span class="generated-issue-name"><em>Addition <a href="issues-list-2015-05-27.html#addition" target="_blank">(<code>addition</code></a>)</em></span></li>
+						<li><span class="generated-issue-name"><em>Mistranslation <a href="issues-list-2015-05-27.html#mistranslation" target="_blank">(<code>mistranslation</code></a>)</em></span></li>
+						<li><span class="generated-issue-name"><em>Omission <a href="issues-list-2015-05-27.html#omission" target="_blank">(<code>omission</code></a>)</em></span></li>
+						<li><span class="generated-issue-name"><em>Untranslated <a href="issues-list-2015-05-27.html#untranslated" target="_blank">(<code>untranslated</code></a>)</em></span></li>
+					</ul>
+				</li>
+				<li><span class="generated-issue-name"><em>Design <a href="issues-list-2015-05-27.html#design" target="_blank">(<code>design</code></a>)</em></span></li>
+				<li><span class="generated-issue-name"><em>Fluency <a href="issues-list-2015-05-27.html#fluency" target="_blank">(<code>fluency</code></a>)</em></span>					<ul>
+						<li><span class="generated-issue-name"><em>Grammar <a href="issues-list-2015-05-27.html#grammar" target="_blank">(<code>grammar</code></a>)</em></span></li>
+						<li><span class="generated-issue-name"><em>Grammatical register <a href="issues-list-2015-05-27.html#grammatical-register" target="_blank">(<code>grammatical-register</code></a>)</em></span></li>
+						<li><span class="generated-issue-name"><em>Inconsistency <a href="issues-list-2015-05-27.html#inconsistency" target="_blank">(<code>inconsistency</code></a>)</em></span></li>
+						<li><span class="generated-issue-name"><em>Spelling <a href="issues-list-2015-05-27.html#spelling" target="_blank">(<code>spelling</code></a>)</em></span></li>
+						<li><span class="generated-issue-name"><em>Typography <a href="issues-list-2015-05-27.html#typography" target="_blank">(<code>typography</code></a>)</em></span></li>
+						<li><span class="generated-issue-name"><em>Unintelligible <a href="issues-list-2015-05-27.html#unintelligible" target="_blank">(<code>unintelligible</code></a>)</em></span></li>
+					</ul>
+				</li>
+				<li><span class="generated-issue-name"><em>Locale convention <a href="issues-list-2015-05-27.html#locale-convention" target="_blank">(<code>locale-convention</code></a>)</em></span></li>
+				<li><span class="generated-issue-name"><em>Style <a href="issues-list-2015-05-27.html#style" target="_blank">(<code>style</code></a>)</em></span></li>
+				<li><span class="generated-issue-name"><em>Terminology <a href="issues-list-2015-05-27.html#terminology" target="_blank">(<code>terminology</code></a>)</em></span></li>
+				<li><span class="generated-issue-name"><em>Verity <a href="issues-list-2015-05-27.html#verity" target="_blank">(<code>verity</code></a>)</em></span>					<ul>
+						<li><span class="generated-issue-name"><em>Completeness <a href="issues-list-2015-05-27.html#completeness" target="_blank">(<code>completeness</code></a>)</em></span></li>
+						<li><span class="generated-issue-name"><em>Legal requirements <a href="issues-list-2015-05-27.html#legal-requirements" target="_blank">(<code>legal-requirements</code></a>)</em></span></li>
+						<li><span class="generated-issue-name"><em>Locale-specific content <a href="issues-list-2015-05-27.html#locale-specific-content" target="_blank">(<code>locale-specific-content</code></a>)</em></span></li>
+					</ul>
+				</li>
+			</ul>
+			<p>Definitions for these issues can be found in the <a href="issues-list-2015-05-27.html" target="_blank">list of MQM issue types</a>.</p>
+			<p>Even the 20 issues of the Core represent more issues than are likely to be checked in any given quality application and users may define subsets of the core for their needs. It is recommended for translation quality assessment tasks that issues contain at least the issue types <span class="generated-issue-name"><em>Accuracy <a href="issues-list-2015-05-27.html#accuracy" target="_blank">(<code>accuracy</code></a>)</em></span> and <span class="generated-issue-name"><em>Fluency <a href="issues-list-2015-05-27.html#fluency" target="_blank">(<code>fluency</code></a>)</em></span> if no other more granular types are included.</p>
+		</div>
+		
+		<div>
+			<h3 id="user-extention">5.3. User extension</h3>
+			<p>While users are strongly encouraged to limit issue types to pre-defined MQM issues, they may add additional issue types to MQM to meet additional requirements. User-defined issue types MUST include the following information:</p>
+			<ul>
+				<li><strong>Name</strong>: A human-readable name for the issue type.</li>
+				<li><strong>ID</strong>: An unprefixed QName that serves as the XML identified of the issue type. The ID MUST begin with <code>x-</code> to indicate that the issue is a user-defined issue. E.g., <code>x-respeaking-error</code> would be a valid ID for a user-defined “respeaking error” but <code>respeaking-error</code> would be invalid.</li>
+				<li><strong>Parent</strong>: The ID value of the parent issue type. The parent may by a predefined MQM issue type or a user-defined issue type.</li>
+				<li><strong>Definition</strong>: A human-readable explanation of the issue type.</li>
+			</ul>
+			<p class="note">User extensions do not provide interoperability between systems and impede the exchange of data. Nevertheless they may be needed to support requirements not anticipated in MQM. Users should tie extensions into the predefined hierarchy using the <code>parent</code> value as much as possible since doing so provides consumers of MQM data with the best guidance in interpreting unknown categories and mapping them to other systems. As with other aspects of MQM, users should limit granularity to the least granular level that meets requirements.</p>
+			<p>Users who encounter frequent need for custom extensions are encouraged to communicate their requirements to the MQM project for possible inclusion of these types in future versions of MQM.</p>
+		</div>
+		<div>
+			<h3 id="other-metrics">5.4. Integration with other metrics</h3>
+			<p>In addition to MQM, it may be desirable to use other metrics that cannot be converted to a native MQM representation for various purposes. The key principle in integrating metrics is that they must be <em>scoped</em> to indicate to what MQM content they apply. For example, if a metric assesses only readability, it would be scoped to provide a score for MQM <span class="generated-issue-name"><em>Fluency <a href="issues-list-2015-05-27.html#fluency" target="_blank">(<code>fluency</code></a>)</em></span>, while a metric that provides a score for “Adequacy” would provide a score for MQM <span class="generated-issue-name"><em>Accuracy <a href="issues-list-2015-05-27.html#accuracy" target="_blank">(<code>accuracy</code></a>)</em></span>. A metric that provides an undifferentiated “quality” score would take all of an MQM metric as its scope and thus provide an overall score.</p>
+			<p>Non-MQM scores may be indicated in an MQM report by using the <code>nodeScore</code> and <code>scoreType</code> attributes, which may be appended to any node in the score report. <!-- IMPORTANT --></p>
+			<p>As the interpretation of any particular metric’s result/score is likely to depend on the specifics of the assessment, MQM can provide no guidance on how to utilize the result/score of non-MQM metrics. Results may be appended to MQM reports at the appropriate nodes in the MQM hierarchy and users may wish to combine these results with the results of MQM-based evaluation, (e.g., through averaging MQM and non-MQM scores normalized on a 1-100 scale). <em>Such combinations are outside the scope of MQM.</em></p>
+			<p>As an example, the BLEU metric, an automatic metric for assessing machine translation (MT) quality with respect to human reference translation(s), is widely used in MT research. In the case of BLEU, the scope is global because BLEU provides a single, undifferentiated quality score. A BLEU score would thus be provided as parallel to the overall MQM score (see <a href="#scoring">Section 8. Scoring</a> for a recommended method for generating an MQM score). An implementer could utilize the BLEU score in various ways in conjunction with MQM: e.g., only assessing those translations that obtain a BLEU score over a specific threshold, averaging the BLEU and MQM scores, or using both scores for thresholds.</p>
+			<p>While the specific use of other scores cannot be mandated, their usage should not conflict with the MQM principles. For example, a metric’s results should not be stated to apply to the <span class="generated-issue-name"><em>Fluency <a href="issues-list-2015-05-27.html#fluency" target="_blank">(<code>fluency</code></a>)</em></span> branch of MQM if they include the results of an evaluation of whether or not terms have been translated correctly.</p>
+		</div>
+	</div>
+
+	<div>
+		<h2 id="mqm_markup">6. Markup (normative)</h2>
+		<p>This section describes the MQM declarative markup. Use of the metrics declaration markup is mandatory for declaring an interoperable MQM metric. When used with XML or HTML, it is strongly recommended that <a href="http://www.w3.org/TR/its20/#lqissue" target="_blank">the ITS 2.0 Localization Quality Issue</a> data category be used to declare MQM issues in conjunction with the <code>locQualityProfileRef</code> pointing to a valid MQM definition. Note that when implemented with ITS 2.0 quality markup that the requirements for implementing are also mandatory.
+		
+		<div>
+			<h3 id="mqm_metric_description">6.1. MQM metrics description</h3>
+			<p>MQM provides an XML mechanism for exchanging descriptions of MQM-compliant metrics. MQM metrics description files use the <code>.mqm</code> file name extension. An <code>.mqm</code> file contains a hierarchical list of MQM <a href="#issue_types">issue types</a>. This listing MUST conform to the <a href="#hierarchical_list">hierarchy</a> of issue types.</p>
+		
+			<p>The following is an example of a small metric description file with issue names in both English and German. It includes a user-defined extension (<code>x-respeaking</code>) used to identify errors caused when a vocal text being respoken without background noise based on a live audio feed is incorrectly repeated by the person doing the respeaking, leading to a mistranscription.</p>
+			<div class="example">
+			<pre><span class="markup">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span>
+<span class="markup">&lt;mqm version="0.9"&gt;</span>
+  <span class="markup">&lt;head&gt;</span>
+    <span class="markup">&lt;name&gt;</span>Small metric<span class="markup">&lt;/name&gt;</span>
+    <span class="markup">&lt;descrip&gt;</span>A small metric intended for human consumption<span class="markup">&lt;/descrip&gt;</span>
+    <span class="markup">&lt;version&gt;</span>1.5<span class="markup">&lt;/version&gt;</span>
+    <span class="markup">&lt;src&gt;</span>http://www.example.com/example.mqm<span class="markup">&lt;/src&gt;</span>
+  <span class="markup">&lt;/head&gt;</span>
+  <span class="markup">&lt;issues&gt;</span>
+    <span class="markup">&lt;issue type="accuracy" display="no"&gt;</span>
+      <span class="markup">&lt;/issue&gt;</span>
+      <span class="markup">&lt;issue type="omission" weight="0.7"/&gt;</span>
+      <span class="markup">&lt;issue type="addition"/&gt;</span>
+    <span class="markup">&lt;/issue&gt;</span>
+    <span class="markup">&lt;issue type="terminology" weight="1.5"/&gt;</span>
+        <span class="markup">&lt;issue type="style" weight="0.5"/&gt;</span>
+    <span class="markup">&lt;issue type="fluency" display="no"&gt;</span>
+      <span class="markup">&lt;issue type="spelling"/&gt;</span>
+      <span class="markup">&lt;issue type="grammar"/&gt;</span>
+      <span class="markup">&lt;issue type="unintelligible" weight="1.5"/&gt;</span>
+    <span class="markup">&lt;/issue&gt;</span>
+    <span class="markup">&lt;issue type="x-respeaking" weight="1.5"/&gt;</span>
+  <span class="markup">&lt;/issues&gt;</span>
+  <span class="markup">&lt;displayNames&gt;</span>
+    <span class="markup">&lt;displaNameSet lang="en"&gt;</span>
+      <span class="markup">&lt;displayName typeRef="accuracy"&gt;</span>Adequacy<span class="markup">&lt;/displayName&gt;</span>
+      <span class="markup">&lt;displayName typeRef="terminology"&gt;</span>Terminology<span class="markup">&lt;/displayName&gt;</span>
+      <span class="markup">&lt;displayName typeRef="omission"&gt;</span>Omission<span class="markup">&lt;/displayName&gt;</span>
+      <span class="markup">&lt;displayName typeRef="addition"&gt;</span>Addition<span class="markup">&lt;/displayName&gt;</span>
+      <span class="markup">&lt;displayName typeRef="fluency"&gt;</span>Fluency<span class="markup">&lt;/displayName&gt;</span>
+      <span class="markup">&lt;displayName typeRef="style"&gt;</span>Style<span class="markup">&lt;/displayName&gt;</span>
+      <span class="markup">&lt;displayName typeRef="spelling"&gt;</span>Spelling<span class="markup">&lt;/displayName&gt;</span>
+      <span class="markup">&lt;displayName typeRef="grammar"&gt;</span>Grammar<span class="markup">&lt;/displayName&gt;</span>
+      <span class="markup">&lt;displayName typeRef="unintelligible"&gt;</span>Unintelligible<span class="markup">&lt;/displayName&gt;</span>
+      <span class="markup">&lt;displayName typeRef="x-respeaking"&gt;</span>Respeaking<span class="markup">&lt;/displayName&gt;</span>
+    <span class="markup">&lt;/displaNameSet&gt;</span>
+    <span class="markup">&lt;displayNameSet lang="de"&gt;</span>
+      <span class="markup">&lt;displayName typeRef="accuracy"&gt;</span>Genauigkeit<span class="markup">&lt;/displayName&gt;</span>
+      <span class="markup">&lt;displayName typeRef="terminology"&gt;</span>Terminologie<span class="markup">&lt;/displayName&gt;</span>
+      <span class="markup">&lt;displayName typeRef="omission"&gt;</span>Auslassung<span class="markup">&lt;/displayName&gt;</span>
+      <span class="markup">&lt;displayName typeRef="addition"&gt;</span>Ergänzung<span class="markup">&lt;/displayName&gt;</span>
+      <span class="markup">&lt;displayName typeRef="fluency"&gt;</span>Sprachkompetenz<span class="markup">&lt;/displayName&gt;</span>
+      <span class="markup">&lt;displayName typeRef="style"&gt;</span>Stil<span class="markup">&lt;/displayName&gt;</span>
+      <span class="markup">&lt;displayName typeRef="spelling"&gt;</span>Rechtschreibung<span class="markup">&lt;/displayName&gt;</span>
+      <span class="markup">&lt;displayName typeRef="grammar"&gt;</span>Grammatik<span class="markup">&lt;/displayName&gt;</span>
+      <span class="markup">&lt;displayName typeRef="unintelligible"&gt;</span>Unverständlich<span class="markup">&lt;/displayName&gt;</span>
+      <span class="markup">&lt;displayName typeRef="x-respeaking"&gt;</span>Sprecherfehler<span class="markup">&lt;/displayName&gt;</span>
+    <span class="markup">&lt;/displayNameSet&gt;</span>
+  <span class="markup">&lt;/displayNames&gt;</span>
+  <span class="markup">&lt;severities&gt;</span>
+    <span class="markup">&lt;severity id="minor" multiplier="1"/&gt;</span>
+    <span class="markup">&lt;severity id="major" multiplier="10"/&gt;</span>
+    <span class="markup">&lt;severity id="critical" multiplier="100"/&gt;</span>
+  <span class="markup">&lt;/severities&gt;</span>
+<span class="markup">&lt;/mqm&gt;</span></pre>
+			</div>
+		</div>
+		<div>
+			<h3 id="mqm-inline-markup">6.2. MQM inline attributes</h3>
+			<p>MQM implements the following attributes in the <code>mqm</code> namespace:</p>
+			<ul>
+				<li><code>issueType</code>. Contains the MQM issue type, listed by ID. Note: MQM implementations MUST use the ID and MUST NOT use a localized name.</li>
+				<li><code>issueSeverity</code>. Contains the MQM issue severity using the name defined in the metric. Note that the default severity level names are <code>minor</code>, <code>major</code>, and <code>critical</code>. While other values MAY be used, if they are used they MUST be defined in the metric definition for proper interpretation.
+			</ul>
+			<p>MQM is designed to be used in conjunction with the following ITS 2.0 attributes from the localization quality issue data category:</p>
+			<ul>
+				<li><code>locQualityIssueType</code>: Contains the issue type as defined by ITS 2.0. Mapping the native MQM value to the appropriate ITS issue type helps ensure compatibility with ITS 2.0-aware implementations, even if they do not implement MQM.</li>
+				<li><code>locQualityIssueComment</code>: Contains a human-readable comment about the issue.</li>
+				<li><code>locQualityIssueSeverity</code>: Contains a rating of severity from 0 to 100. Mapping from the name contained in the MQM <code>issueSeverity</code> attribute to this attribute enables ITS 2.0-aware tools to interpret the severity of the issue.</li>
+			</ul>
+			<p>To ensure compatibility with ITS 2.0 markup, implementers SHOULD use ITS 2.0 markup where possible. All of the ITS 2.0 localization quality annotation may be used. MQM markup adds capability to the ITS 2.0 quality markup.</p>
+			<div class="example"><pre>			
+<span class="markup">&lt;?xml version="1.0"?>
+&lt;doc xmlns:its="http://www.w3.org/2005/11/its" its:version="2.0">
+<span class="mqm-markup">&lt;doc xmlns:mqm="[XXXXXXXXXXX]" mqm:version="1.0"></span>
+  &lt;para>&lt;span </span>
+      <span class="mqm-markup">mqm:issueType="spelling"
+      mqm:issueSeverity="major"</span>
+      <span class="markup">its:locQualityIssueType="misspelling"
+      its:locQualityIssueComment="Should be Roquefort"
+      its:locQualityIssueSeverity="50"></span>Roqfort<span class="markup">&lt;/span></span> is an cheese<span class="markup">&lt;/para>
+&lt;/doc></span></pre>
+			</div>
+			<p>To create this markup the following process is followed:
+			<ol>
+				<li>The MQM issue type (<span class="generated-issue-name"><em>Spelling <a href="issues-list-2015-05-27.html#spelling" target="_blank">(<code>spelling</code></a>)</em></span>) is mapped to the corresponding ITS 2.0 type (ITS 2.0 is less fine-grained than MQM in many cases) as described in <a href="#relationship-its">8. Relationship to ITS</a> and added as the value of <code>its:locQualityIssueType</code>.</li>
+				<li>The MQM issue type and severity are declared in the <code>mqm:</code> namespace</li>
+				<li>The value of the severity multiplier is declared on a scale from 0 to 100 and inserted as the value of the <code>its:locQualityIssueSeverity</code> attribute. In this case the <code>multiplier</code> value was 5 (out of 10), so it is represented as 50 in ITS markup.</li>
+				<li>A comment is added using the <code>its:locQualityIssueComment</code> attribute.</li>
+				<li>Globally, the relevant profile (specifications and metric definition) are linked using the <code>its:locQualityProfile</code> attribute. <strong><!-- IMPORTANT --></strong></li>
+			</ol>
+		</div>
+		<div>
+			<h3 id="mqm-inline-elements">6.3. MQM inline elements</h3>
+			<p>In general, MQM XML implementations should use existing span-level elements in the native XML format that MQM is being added to where possible. This use can be done using any of the ITS 2.0 methods with the addition of the MQM-specific attributes. However, such elements may not be available. In such cases, MQM defines two elements that can be used to add inline markup:</p>
+			<ul>
+				<li><strong><code>&lt;mqm:startIssue /></code></strong>. This element defines the starting position of an MQM span.</li>
+				<li><strong><code>&lt;mqm:endIssue /></code></strong>. This element defines the end position of an MQM span.</li>
+			</ul>
+			<p>Two empty elements are used so as to prevent any interference between MQM tags and existing XML structure, such as those that could be caused by improperly nested elements. To pair these tags the <code>id</code> attribute is used. ID values MUST be unique within the document to prevent confusion.</p>
+			<p>An example of an MQM annotation is seen in the following XML snippet:</p>
+<pre>    <span class="markup">&lt;para></span>“Instead of strengthening
+        <span class="markup">&lt;mqm:startIssue type="function-words" id="1f59a2" severity="minor" agent="f-deluz" comment="article unneeded here" active="yes"/></span>
+        the<span class="markup">&lt;mqm:endIssue idref="1f59a2"/></span>
+        civil society, the president cancels
+        <span class="markup">&lt;mqm:startIssue type="agreement" severity="major" comment="should be “it”" agent="f-deluz" id="3c469d" active="yes"/></span>them<span class="markup">&lt;mqm:endIssue idref="3c469d"/></span>
+        de facto”, deplores Saeda.<span class="markup">
+    &lt;/para></span></pre>
+			<p>The <code>mqm:startIssue</code> element MUST take the following mandatory attributes:</p>
+			<ul>
+				<li><strong><code>id</code></strong>. Used to match the corresponding <code>mqm:startIssue</code> and <code>mqm:endIssue</code> tags within text</li>
+				<li><strong><code>type</code></strong>. Provides the MQM issue type.</li>
+			</ul>
+			<p>The <code>mqm:startIssue</code> element CAN take the following optional attributes:</p>
+			<ul>
+				<li><strong><code>severity</code></strong>. Permissible values defined by the MQM metric in use. Provides the severity of the issue. Default value is undefined.</li>
+				<li><strong><code>agent</code></strong>. Text string identifying the agent that supplied the annotation. Default value is undefined.</li>
+				<li><strong><code>comment</code></strong>. Text string containing a human-readable comment attached to an issue. Default value is undefined</li>
+				<li><strong><code>active</code></strong>. One of <code>yes</code> or <code>no</code>. Indicates whether the issue is considered active (<code>yes</code>) or inactive (<code>no</code>). Default value is <code>yes</code>. If an issue is marked as inactive, this means that it has either been resolved or determined not to be an actual error.</li> 
+			</ul>
+			<p>In addition, ITS 2.0 attributes MAY be added to these elements to promote greater interoperability.</p>
+			<p>The <code>mqm:endIssue</code> element MUST take the following mandatory attribute:</p>
+			<ul>
+				<li><strong><code>idref</code></strong>. A value corresponding to the <code>id</code> of the <code>mqm:startIssue</code> tag that begins the identified span.</li>
+			</ul>
+			<p>Use of these inline elements also requires that the mqm namespace be declared in the document. <span class="fixme">The method for declaring this namespace needs to be determined</span>.</p>
+		</div>
+	</div>
+	<div>
+		<h2 id="relationship-its">7. Relationship to ITS 2.0 (normative)</h2>
+		<p>The <a href="http://www.w3.org/TR/its20/" target="_blank">Internationalization Tag Set (ITS) 2.0 specification</a> holds a privileged position with respect to MQM due to its use as a standard format for interchanging localization quality information through its <a href="http://www.w3.org/TR/its20/#lqissue-typevalues" target="_blank"><code>localization quality issue</code></a> data category.</p>
+		<p>This section describes the mapping process from MQM to ITS 2.0 and from ITS 2.0 to MQM. As MQM allows the declaration of arbitrary translation quality assessment metrics, it serves a different purpose from ITS, which provides high-level interoperability between different metrics. While ITS is much less granular than the full MQM hierarchy, <em>individual</em> MQM metrics may be either more or less granular than the set of ITS 2.0 localization quality issue types (or may be more granular in some areas and less in other). As a result it is likely that conversion between MQM-based metrics and ITS will be “lossy” to some extent. In general the mapping process from MQM to ITS 2.0 is straight-forward since ITS 2.0 does not allow subsetting of the possible values for localization quality issue type, but the conversion from ITS 2.0 to MQM may be more challenging since an arbitrary MQM metric may or may not contain the default target mappings provided below and mappings may account for the MQM hierarchy.</p>
+		<p>MQM metrics that map to ITS MUST use the mappings described in this section, subject to the limitations described below.</p>
+		<div>
+			<h3 id="mqm-to-its">7.1. MQM-to-ITS mapping</h3>
+			<p>MQM issue types are mapped to ITS issue types according to the following table. Note that this mapping is unambiguous and MUST be followed to ensure consistency between applications.<p>
+			<table class="tabular">
+				<tbody>
+<tr><th>MQM issue type</th><th>ITS 2.0 issue type</th></tr>
+<tr><td class="mqmL1"><span class="generated-issue-name"><em>Accuracy <a href="issues-list-2015-05-27.html#accuracy" target="_blank">(<code>accuracy</code></a>)</em></span></td><td>mistranslation</td></tr>
+<tr><td class="mqmL2"><span class="generated-issue-name"><em>Addition <a href="issues-list-2015-05-27.html#addition" target="_blank">(<code>addition</code></a>)</em></span></td><td>addition</td></tr>
+<tr><td class="mqmL2"><span class="generated-issue-name"><em>Improper exact TM match <a href="issues-list-2015-05-27.html#improper-exact-tm-match" target="_blank">(<code>improper-exact-tm-match</code></a>)</em></span></td><td>mistranslation</td></tr>
+<tr><td class="mqmL2"><span class="generated-issue-name"><em>Mistranslation <a href="issues-list-2015-05-27.html#mistranslation" target="_blank">(<code>mistranslation</code></a>)</em></span></td><td rowspan="2">mistranslation</td></tr>
+<tr><td class="mqmL3"><span class="generated-issue-name"><em>Date/time <a href="issues-list-2015-05-27.html#date-time" target="_blank">(<code>date-time</code></a>)</em></span></td></tr>
+<tr><td class="mqmL3"><span class="generated-issue-name"><em>Entity (such as name or place) <a href="issues-list-2015-05-27.html#entity" target="_blank">(<code>entity</code></a>)</em></span></td><td>inconsistent-entities</td></tr>
+<tr><td class="mqmL3"><span class="generated-issue-name"><em>False friend <a href="issues-list-2015-05-27.html#false-friend" target="_blank">(<code>false-friend</code></a>)</em></span></td><td rowspan="2">mistranslation</td></tr>
+<tr><td class="mqmL3"><span class="generated-issue-name"><em>Should not have been translated <a href="issues-list-2015-05-27.html#no-translate" target="_blank">(<code>no-translate</code></a>)</em></span></td></tr>
+<tr><td class="mqmL3"><span class="generated-issue-name"><em>Number <a href="issues-list-2015-05-27.html#number" target="_blank">(<code>number</code></a>)</em></span></td><td>numbers</td></tr>
+<tr><td class="mqmL3"><span class="generated-issue-name"><em>Overly literal <a href="issues-list-2015-05-27.html#overly-literal" target="_blank">(<code>overly-literal</code></a>)</em></span></td><td rowspan="2">mistranslation</td></tr>
+<tr><td class="mqmL3"><span class="generated-issue-name"><em>Unit conversion <a href="issues-list-2015-05-27.html#unit-conversion" target="_blank">(<code>unit-conversion</code></a>)</em></span></td></tr>
+<tr><td class="mqmL2"><span class="generated-issue-name"><em>Omission <a href="issues-list-2015-05-27.html#omission" target="_blank">(<code>omission</code></a>)</em></span></td><td rowspan="2">omission</td></tr>
+<tr><td class="mqmL3"><span class="generated-issue-name"><em>Omitted variable <a href="issues-list-2015-05-27.html#omitted-variable" target="_blank">(<code>omitted-variable</code></a>)</em></span></td></tr>
+<tr><td class="mqmL2"><span class="generated-issue-name"><em>Over-translation <a href="issues-list-2015-05-27.html#over-translation" target="_blank">(<code>over-translation</code></a>)</em></span></td><td rowspan="2">mistranslation</td></tr>
+<tr><td class="mqmL2"><span class="generated-issue-name"><em>Under-translation <a href="issues-list-2015-05-27.html#under-translation" target="_blank">(<code>under-translation</code></a>)</em></span></td></tr>
+<tr><td class="mqmL2"><span class="generated-issue-name"><em>Untranslated <a href="issues-list-2015-05-27.html#untranslated" target="_blank">(<code>untranslated</code></a>)</em></span></td><td rowspan="2">untranslated</td></tr>
+<tr><td class="mqmL3"><span class="generated-issue-name"><em>Untranslated graphic <a href="issues-list-2015-05-27.html#untranslated-graphic" target="_blank">(<code>untranslated-graphic</code></a>)</em></span></td></tr>
+
+<tr><td colspan="2" style="background-color:gray;"> </td></tr>
+
+<tr><td class="mqmL1"><span class="generated-issue-name"><em>Compatibility (Deprecated) <a href="issues-list-2015-05-27.html#compatibility" target="_blank">(<code>compatibility</code></a>)</em></span></td><td>other (for all children)</td></tr>
+
+<tr><td colspan="2" style="background-color:gray;"> </td></tr>
+
+<tr><td class="mqmL1"><span class="generated-issue-name"><em>Design <a href="issues-list-2015-05-27.html#design" target="_blank">(<code>design</code></a>)</em></span></td><td rowspan="6">formatting</td></tr>
+<tr><td class="mqmL2"><span class="generated-issue-name"><em>Graphics and tables <a href="issues-list-2015-05-27.html#graphics-tables" target="_blank">(<code>graphics-tables</code></a>)</em></span></td></tr>
+<tr><td class="mqmL3"><span class="generated-issue-name"><em>Call-outs and captions <a href="issues-list-2015-05-27.html#call-outs-captions" target="_blank">(<code>call-outs-captions</code></a>)</em></span></td></tr>
+<tr><td class="mqmL3"><span class="generated-issue-name"><em>Missing graphic/table <a href="issues-list-2015-05-27.html#graphics-tables-missing" target="_blank">(<code>graphics-tables-missing</code></a>)</em></span></td></tr>
+<tr><td class="mqmL3"><span class="generated-issue-name"><em>Position of graphic/table <a href="issues-list-2015-05-27.html#graphics-tables-position" target="_blank">(<code>graphics-tables-position</code></a>)</em></span></td></tr>
+<tr><td class="mqmL2"><span class="generated-issue-name"><em>Hyphenation <a href="issues-list-2015-05-27.html#hyphenation" target="_blank">(<code>hyphenation</code></a>)</em></span></td></tr>
+<tr><td class="mqmL2"><span class="generated-issue-name"><em>Length <a href="issues-list-2015-05-27.html#length" target="_blank">(<code>length</code></a>)</em></span></td><td>length</td></tr>
+<tr><td class="mqmL2"><span class="generated-issue-name"><em>Local formatting <a href="issues-list-2015-05-27.html#local-formatting" target="_blank">(<code>local-formatting</code></a>)</em></span></td><td rowspan="9">formatting</td></tr>
+<tr><td class="mqmL3"><span class="generated-issue-name"><em>Font <a href="issues-list-2015-05-27.html#font" target="_blank">(<code>font</code></a>)</em></span></td></tr>
+<tr><td class="mqmL4"><span class="generated-issue-name"><em>Bold/italic <a href="issues-list-2015-05-27.html#bold-italic" target="_blank">(<code>bold-italic</code></a>)</em></span></td></tr>
+<tr><td class="mqmL4"><span class="generated-issue-name"><em>Font, single/double-width (CJK only) <a href="issues-list-2015-05-27.html#single-double-width" target="_blank">(<code>single-double-width</code></a>)</em></span></td></tr>
+<tr><td class="mqmL4"><span class="generated-issue-name"><em>Wrong size <a href="issues-list-2015-05-27.html#wrong-font-size" target="_blank">(<code>wrong-font-size</code></a>)</em></span></td></tr>
+<tr><td class="mqmL3"><span class="generated-issue-name"><em>Kerning <a href="issues-list-2015-05-27.html#kerning" target="_blank">(<code>kerning</code></a>)</em></span></td></tr>
+<tr><td class="mqmL3"><span class="generated-issue-name"><em>Leading <a href="issues-list-2015-05-27.html#leading" target="_blank">(<code>leading</code></a>)</em></span></td></tr>
+<tr><td class="mqmL3"><span class="generated-issue-name"><em>Paragraph indentation <a href="issues-list-2015-05-27.html#paragraph-indentation" target="_blank">(<code>paragraph-indentation</code></a>)</em></span></td></tr>
+<tr><td class="mqmL3"><span class="generated-issue-name"><em>Text alignment <a href="issues-list-2015-05-27.html#text-alignment" target="_blank">(<code>text-alignment</code></a>)</em></span></td></tr>
+<tr><td class="mqmL2"><span class="generated-issue-name"><em>Markup <a href="issues-list-2015-05-27.html#markup" target="_blank">(<code>markup</code></a>)</em></span></td><td rowspan="6">markup</td></tr>
+<tr><td class="mqmL3"><span class="generated-issue-name"><em>Added markup <a href="issues-list-2015-05-27.html#added-markup" target="_blank">(<code>added-markup</code></a>)</em></span></td></tr>
+<tr><td class="mqmL3"><span class="generated-issue-name"><em>Inconsistent markup <a href="issues-list-2015-05-27.html#inconsistent-markup" target="_blank">(<code>inconsistent-markup</code></a>)</em></span></td></tr>
+<tr><td class="mqmL3"><span class="generated-issue-name"><em>Misplaced markup <a href="issues-list-2015-05-27.html#misplaced-markup" target="_blank">(<code>misplaced-markup</code></a>)</em></span></td></tr>
+<tr><td class="mqmL3"><span class="generated-issue-name"><em>Missing markup <a href="issues-list-2015-05-27.html#missing-markup" target="_blank">(<code>missing-markup</code></a>)</em></span></td></tr>
+<tr><td class="mqmL3"><span class="generated-issue-name"><em>Questionable markup <a href="issues-list-2015-05-27.html#questionable-markup" target="_blank">(<code>questionable-markup</code></a>)</em></span></td></tr>
+<tr><td class="mqmL2"><span class="generated-issue-name"><em>Truncation/text expansion <a href="issues-list-2015-05-27.html#truncation-text-expansion" target="_blank">(<code>truncation-text-expansion</code></a>)</em></span></td><td>length</td></tr>
+<tr><td class="mqmL2"><span class="generated-issue-name"><em>Overall design (layout) <a href="issues-list-2015-05-27.html#overall-design" target="_blank">(<code>overall-design</code></a>)</em></span></td><td rowspan="8">formatting</td></tr>
+<tr><td class="mqmL3"><span class="generated-issue-name"><em>Color <a href="issues-list-2015-05-27.html#color" target="_blank">(<code>color</code></a>)</em></span></td></tr>
+<tr><td class="mqmL3"><span class="generated-issue-name"><em>Footnote/endnote format <a href="issues-list-2015-05-27.html#footnote-format" target="_blank">(<code>footnote-format</code></a>)</em></span></td></tr>
+<tr><td class="mqmL3"><span class="generated-issue-name"><em>Global font choice <a href="issues-list-2015-05-27.html#global-font-choice" target="_blank">(<code>global-font-choice</code></a>)</em></span></td></tr>
+<tr><td class="mqmL3"><span class="generated-issue-name"><em>Headers and footers <a href="issues-list-2015-05-27.html#headers-footers" target="_blank">(<code>headers-footers</code></a>)</em></span></td></tr>
+<tr><td class="mqmL3"><span class="generated-issue-name"><em>Margins <a href="issues-list-2015-05-27.html#margins" target="_blank">(<code>margins</code></a>)</em></span></td></tr>
+<tr><td class="mqmL3"><span class="generated-issue-name"><em>Page breaks <a href="issues-list-2015-05-27.html#page-breaks" target="_blank">(<code>page-breaks</code></a>)</em></span></td></tr>
+<tr><td class="mqmL3"><span class="generated-issue-name"><em>Widows/orphans <a href="issues-list-2015-05-27.html#widows-orphans" target="_blank">(<code>widows-orphans</code></a>)</em></span></td></tr>
+
+<tr><td colspan="2" style="background-color:gray;"> </td></tr>
+
+<tr><td class="mqmL1"><span class="generated-issue-name"><em>Fluency <a href="issues-list-2015-05-27.html#fluency" target="_blank">(<code>fluency</code></a>)</em></span></td><td>other</td></tr>
+<tr><td class="mqmL2"><span class="generated-issue-name"><em>Ambiguity <a href="issues-list-2015-05-27.html#ambiguity" target="_blank">(<code>ambiguity</code></a>)</em></span></td><td>other</td></tr>
+<tr><td class="mqmL2"><span class="generated-issue-name"><em>Character encoding <a href="issues-list-2015-05-27.html#character-encoding" target="_blank">(<code>character-encoding</code></a>)</em></span></td><td>characters</td></tr>
+<tr><td class="mqmL2"><span class="generated-issue-name"><em>Coherence <a href="issues-list-2015-05-27.html#coherence" target="_blank">(<code>coherence</code></a>)</em></span></td><td>other</td></tr>
+<tr><td class="mqmL2"><span class="generated-issue-name"><em>Cohesion <a href="issues-list-2015-05-27.html#cohesion" target="_blank">(<code>cohesion</code></a>)</em></span></td><td>other</td></tr>
+<tr><td class="mqmL2"><span class="generated-issue-name"><em>Corpus conformance <a href="issues-list-2015-05-27.html#corpus-conformance" target="_blank">(<code>corpus-conformance</code></a>)</em></span></td><td>non-conformance</td></tr>
+<tr><td class="mqmL2"><span class="generated-issue-name"><em>Duplication <a href="issues-list-2015-05-27.html#duplication" target="_blank">(<code>duplication</code></a>)</em></span></td><td>duplication</td></tr>
+<tr><td class="mqmL2"><span class="generated-issue-name"><em>Grammar <a href="issues-list-2015-05-27.html#grammar" target="_blank">(<code>grammar</code></a>)</em></span></td><td rowspan="7">grammar</td></tr>
+<tr><td class="mqmL3"><span class="generated-issue-name"><em>Function words <a href="issues-list-2015-05-27.html#function-words" target="_blank">(<code>function-words</code></a>)</em></span></td></tr>
+<tr><td class="mqmL3"><span class="generated-issue-name"><em>Word form <a href="issues-list-2015-05-27.html#word-form" target="_blank">(<code>word-form</code></a>)</em></span></td></tr>
+<tr><td class="mqmL4"><span class="generated-issue-name"><em>Agreement <a href="issues-list-2015-05-27.html#agreement" target="_blank">(<code>agreement</code></a>)</em></span></td></tr>
+<tr><td class="mqmL4"><span class="generated-issue-name"><em>Part of speech <a href="issues-list-2015-05-27.html#part-of-speech" target="_blank">(<code>part-of-speech</code></a>)</em></span></td></tr>
+<tr><td class="mqmL4"><span class="generated-issue-name"><em>Tense/mood/aspect <a href="issues-list-2015-05-27.html#tense-mood-aspect" target="_blank">(<code>tense-mood-aspect</code></a>)</em></span></td></tr>
+<tr><td class="mqmL3"><span class="generated-issue-name"><em>Word order <a href="issues-list-2015-05-27.html#word-order" target="_blank">(<code>word-order</code></a>)</em></span></td></tr>
+<tr><td class="mqmL2"><span class="generated-issue-name"><em>Grammatical register <a href="issues-list-2015-05-27.html#grammatical-register" target="_blank">(<code>grammatical-register</code></a>)</em></span></td><td>register (ITS register covers both <span class="generated-issue-name"><em>Grammatical register <a href="issues-list-2015-05-27.html#grammatical-register" target="_blank">(<code>grammatical-register</code></a>)</em></span> and <span class="generated-issue-name"><em>Register <a href="issues-list-2015-05-27.html#register" target="_blank">(<code>register</code></a>)</em></span>)</td></tr>
+<tr><td class="mqmL2"><span class="generated-issue-name"><em>Inconsistency <a href="issues-list-2015-05-27.html#inconsistency" target="_blank">(<code>inconsistency</code></a>)</em></span></td><td rowspan="5">inconsistency</td></tr>
+<tr><td class="mqmL3"><span class="generated-issue-name"><em>Inconsistent abbreviations <a href="issues-list-2015-05-27.html#inconsistent-abbreviations" target="_blank">(<code>inconsistent-abbreviations</code></a>)</em></span></td></tr>
+<tr><td class="mqmL3"><span class="generated-issue-name"><em>Images vs. text <a href="issues-list-2015-05-27.html#images-vs-text" target="_blank">(<code>images-vs-text</code></a>)</em></span></td></tr>
+<tr><td class="mqmL3"><span class="generated-issue-name"><em>Inconsistent link/cross-reference <a href="issues-list-2015-05-27.html#inconsistent-link" target="_blank">(<code>inconsistent-link</code></a>)</em></span></td></tr>
+<tr><td class="mqmL3"><span class="generated-issue-name"><em>Inconsistent with external reference <a href="issues-list-2015-05-27.html#external-inconsistency" target="_blank">(<code>external-inconsistency</code></a>)</em></span></td></tr>
+<tr><td class="mqmL2"><span class="generated-issue-name"><em>Index/TOC <a href="issues-list-2015-05-27.html#index-toc" target="_blank">(<code>index-toc</code></a>)</em></span></td><td rowspan="4">other</td></tr>
+<tr><td class="mqmL3"><span class="generated-issue-name"><em>Index/TOC format <a href="issues-list-2015-05-27.html#index-toc-format" target="_blank">(<code>index-toc-format</code></a>)</em></span></td></tr>
+<tr><td class="mqmL3"><span class="generated-issue-name"><em>Missing/incorrect TOC item <a href="issues-list-2015-05-27.html#missing-incorrect-toc-item" target="_blank">(<code>missing-incorrect-toc-item</code></a>)</em></span></td></tr>
+<tr><td class="mqmL3"><span class="generated-issue-name"><em>Page references <a href="issues-list-2015-05-27.html#page-references" target="_blank">(<code>page-references</code></a>)</em></span></td></tr>
+<tr><td class="mqmL2"><span class="generated-issue-name"><em>Link/cross-reference <a href="issues-list-2015-05-27.html#broken-link" target="_blank">(<code>broken-link</code></a>)</em></span></td><td rowspan="3">other</td></tr>
+<tr><td class="mqmL3"><span class="generated-issue-name"><em>Document-external link <a href="issues-list-2015-05-27.html#document-external-link" target="_blank">(<code>document-external-link</code></a>)</em></span></td></tr>
+<tr><td class="mqmL3"><span class="generated-issue-name"><em>Document-internal link <a href="issues-list-2015-05-27.html#document-internal-link" target="_blank">(<code>document-internal-link</code></a>)</em></span></td></tr>
+<tr><td class="mqmL3"><span class="generated-issue-name"><em>Nonallowed characters <a href="issues-list-2015-05-27.html#nonallowed-characters" target="_blank">(<code>nonallowed-characters</code></a>)</em></span></td><td>characters</td></tr>
+<tr><td class="mqmL3"><span class="generated-issue-name"><em>Offensive <a href="issues-list-2015-05-27.html#offensive" target="_blank">(<code>offensive</code></a>)</em></span></td><td>other</td></tr>
+<tr><td class="mqmL2"><span class="generated-issue-name"><em>Pattern problem <a href="issues-list-2015-05-27.html#pattern-problem" target="_blank">(<code>pattern-problem</code></a>)</em></span></td><td>pattern-problem</td></tr>
+<tr><td class="mqmL2"><span class="generated-issue-name"><em>Sorting <a href="issues-list-2015-05-27.html#sorting" target="_blank">(<code>sorting</code></a>)</em></span></td><td>other</td></tr>
+<tr><td class="mqmL2"><span class="generated-issue-name"><em>Spelling <a href="issues-list-2015-05-27.html#spelling" target="_blank">(<code>spelling</code></a>)</em></span></td><td rowspan="3">misspelling</td></tr>
+<tr><td class="mqmL3"><span class="generated-issue-name"><em>Capitalization <a href="issues-list-2015-05-27.html#capitalization" target="_blank">(<code>capitalization</code></a>)</em></span></td></tr>
+<tr><td class="mqmL3"><span class="generated-issue-name"><em>Diacritics <a href="issues-list-2015-05-27.html#diacritics" target="_blank">(<code>diacritics</code></a>)</em></span></td></tr>
+<tr><td class="mqmL2"><span class="generated-issue-name"><em>Typography <a href="issues-list-2015-05-27.html#typography" target="_blank">(<code>typography</code></a>)</em></span></td><td rowspan="4">typographical</td></tr>
+<tr><td class="mqmL3"><span class="generated-issue-name"><em>Punctuation <a href="issues-list-2015-05-27.html#punctuation" target="_blank">(<code>punctuation</code></a>)</em></span></td></tr>
+<tr><td class="mqmL3"><span class="generated-issue-name"><em>Unpaired quote marks or brackets <a href="issues-list-2015-05-27.html#unpaired-marks" target="_blank">(<code>unpaired-marks</code></a>)</em></span></td></tr>
+<tr><td class="mqmL3"><span class="generated-issue-name"><em>Whitespace <a href="issues-list-2015-05-27.html#whitespace" target="_blank">(<code>whitespace</code></a>)</em></span></td></tr>
+<tr><td class="mqmL2"><span class="generated-issue-name"><em>Unintelligible <a href="issues-list-2015-05-27.html#unintelligible" target="_blank">(<code>unintelligible</code></a>)</em></span></td><td>uncategorized</td></tr>
+
+<tr><td colspan="2" style="background-color:gray;"> </td></tr>
+
+<tr><td class="mqmL1"><span class="generated-issue-name"><em>Internationalization <a href="issues-list-2015-05-27.html#internationalization" target="_blank">(<code>internationalization</code></a>)</em></span></td><td>internationalization (for all subtypes)</td></tr>
+
+<tr><td colspan="2" style="background-color:gray;"> </td></tr>
+
+<tr><td class="mqmL1"><span class="generated-issue-name"><em>Locale convention <a href="issues-list-2015-05-27.html#locale-convention" target="_blank">(<code>locale-convention</code></a>)</em></span></td><td>locale-violation (for all subtypes)</td></tr>
+
+<tr><td colspan="2" style="background-color:gray;"> </td></tr>
+
+<tr><td class="mqmL1"><span class="generated-issue-name"><em>Style <a href="issues-list-2015-05-27.html#style" target="_blank">(<code>style</code></a>)</em></span></td><td rowspan="4">style</td></tr>
+<tr><td class="mqmL2"><span class="generated-issue-name"><em>Awkward <a href="issues-list-2015-05-27.html#awkward" target="_blank">(<code>awkward</code></a>)</em></span></td></tr>
+<tr><td class="mqmL2"><span class="generated-issue-name"><em>Company style <a href="issues-list-2015-05-27.html#company-style" target="_blank">(<code>company-style</code></a>)</em></span></td></tr>
+<tr><td class="mqmL2"><span class="generated-issue-name"><em>Inconsistent style <a href="issues-list-2015-05-27.html#inconsistent-style" target="_blank">(<code>inconsistent-style</code></a>)</em></span></td></tr>
+<tr><td class="mqmL2"><span class="generated-issue-name"><em>Register <a href="issues-list-2015-05-27.html#register" target="_blank">(<code>register</code></a>)</em></span></td><td rowspan="2">register (ITS register covers both <span class="generated-issue-name"><em>Grammatical register <a href="issues-list-2015-05-27.html#grammatical-register" target="_blank">(<code>grammatical-register</code></a>)</em></span> and <span class="generated-issue-name"><em>Register <a href="issues-list-2015-05-27.html#register" target="_blank">(<code>register</code></a>)</em></span>)</td></tr>
+<tr><td class="mqmL3"><span class="generated-issue-name"><em>Variants/slang <a href="issues-list-2015-05-27.html#variants-slang" target="_blank">(<code>variants-slang</code></a>)</em></span></td></tr>
+<tr><td class="mqmL2"><span class="generated-issue-name"><em>Third-party style <a href="issues-list-2015-05-27.html#third-party-style" target="_blank">(<code>third-party-style</code></a>)</em></span></td><td rowspan="2">style</td></tr>
+<tr><td class="mqmL2"><span class="generated-issue-name"><em>Unidiomatic <a href="issues-list-2015-05-27.html#unidiomatic" target="_blank">(<code>unidiomatic</code></a>)</em></span></td></tr>
+
+<tr><td colspan="2" style="background-color:gray;"> </td></tr>
+
+<tr><td class="mqmL1"><span class="generated-issue-name"><em>Terminology <a href="issues-list-2015-05-27.html#terminology" target="_blank">(<code>terminology</code></a>)</em></span></td><td>terminology (for all subtypes)</td></tr>
+
+<tr><td colspan="2" style="background-color:gray;"> </td></tr>
+
+<tr><td class="mqmL1"><span class="generated-issue-name"><em>Verity <a href="issues-list-2015-05-27.html#verity" target="_blank">(<code>verity</code></a>)</em></span></td><td rowspan="5">other</td></tr>
+<tr><td class="mqmL2"><span class="generated-issue-name"><em>Completeness <a href="issues-list-2015-05-27.html#completeness" target="_blank">(<code>completeness</code></a>)</em></span></td></tr>
+<tr><td class="mqmL3"><span class="generated-issue-name"><em>Incomplete List <a href="issues-list-2015-05-27.html#incomplete-list" target="_blank">(<code>incomplete-list</code></a>)</em></span></td></tr>
+<tr><td class="mqmL3"><span class="generated-issue-name"><em>Incomplete procedure <a href="issues-list-2015-05-27.html#incomplete-procedure" target="_blank">(<code>incomplete-procedure</code></a>)</em></span></td></tr>
+<tr><td class="mqmL2"><span class="generated-issue-name"><em>End-user suitability <a href="issues-list-2015-05-27.html#end-user-suitability" target="_blank">(<code>end-user-suitability</code></a>)</em></span></td></tr>
+<tr><td class="mqmL2"><span class="generated-issue-name"><em>Legal requirements <a href="issues-list-2015-05-27.html#legal-requirements" target="_blank">(<code>legal-requirements</code></a>)</em></span></td><td>legal</td></tr>
+<tr><td class="mqmL2"><span class="generated-issue-name"><em>Locale-specific content <a href="issues-list-2015-05-27.html#locale-specific-content" target="_blank">(<code>locale-specific-content</code></a>)</em></span></td><td>locale-specific-content</td></tr>
+				</tbody>
+			</table>
+			<p>Note that the entire Internationalization branch of MQM maps to the ITS <code>internationalization</code> type. It is anticipated that this mapping will apply to all children of the MQM <code>Internationalization</code> issue type that may be added in the future.</p>
+		</div>
+		<div>
+			<h3 id="its-to-mqm">7.2. ITS-to-MQM mapping</h3>
+			<p>Mapping from ITS to MQM is less likely to be used and presents particular problems since MQM metrics typically contain only a small subset of the full MQM issue set. As a result MQM issues to which ITS localization quality issue type values are mapped may not exist in a particular MQM metric. In such cases processes MUST map the ITS value to the closest higher-level issue type in MQM if one exists in the target MQM metric. If no higher-level issue type exists in the target MQM metric, the process MUST skip the ITS 2.0 issue type (but MAY preserve the ITS 2.0 markup).</p>
+			<p>For example, if a process encounters the ITS 2.0 <span class="generated-issue-name"><em>Omission <a href="issues-list-2015-05-27.html#omission" target="_blank">(<code>omission</code></a>)</em></span> type and the target MQM metric does not contain <span class="generated-issue-name"><em>Omission <a href="issues-list-2015-05-27.html#omission" target="_blank">(<code>omission</code></a>)</em></span> but does contain <span class="generated-issue-name"><em>Accuracy <a href="issues-list-2015-05-27.html#accuracy" target="_blank">(<code>accuracy</code></a>)</em></span>, the ITS <code>omission</code> value would be mapped to MQM <span class="generated-issue-name"><em>Accuracy <a href="issues-list-2015-05-27.html#accuracy" target="_blank">(<code>accuracy</code></a>)</em></span>. However, if the MQM metric does not contain <span class="generated-issue-name"><em>Accuracy <a href="issues-list-2015-05-27.html#accuracy" target="_blank">(<code>accuracy</code></a>)</em></span>, the higher node in the MQM hierarchy, the ITS <code>omission</code> issue type would be ignored/omitted by the conversion process.</p>
+			<p>Note that the above requirements mean that in some cases there may be a many-to-one mapping from ITS to MQM. For example, if a document contains ITS annotations for <code>omission</code>, <code>untranslated</code>, and <code>addition</code>, but the target MQM metric contains <span class="generated-issue-name"><em>Accuracy <a href="issues-list-2015-05-27.html#accuracy" target="_blank">(<code>accuracy</code></a>)</em></span> and no daughter categories, all of these categories would be mapped to MQM <span class="generated-issue-name"><em>Accuracy <a href="issues-list-2015-05-27.html#accuracy" target="_blank">(<code>accuracy</code></a>)</em></span>. In other words, there is no universal mapping from ITS to all MQM metrics since MQM metrics do not all contain the same issues.</p>
+			<p>Processes encountering issues such as those described in the previous paragraphs SHOULD alert the user about the information loss or remapping if user interaction is expected by the process.<p>
+			<p>In most cases the table shows that the ITS issue types map to MQM issue types with identical (except for casing) or similar names, highlighting the evolutionary relationship between ITS and MQM. Those items where names are different in a non-trivial manner are marked with an asterisk (*) to help draw attention to the fact that the names do not match.</p>
+			<table class="tabular">
+				<tbody>
+<tr><th style="width:20%;">ITS 2.0 Localization Quality Issue type</th><th style="width:30%;">MQM issue type</th><th style="width:50%;">Notes</th></tr>
+<tr><td>terminology</td><td><span class="generated-issue-name"><em>Terminology <a href="issues-list-2015-05-27.html#terminology" target="_blank">(<code>terminology</code></a>)</em></span></td><td></td></tr>
+<tr><td>mistranslation</td><td><span class="generated-issue-name"><em>Mistranslation <a href="issues-list-2015-05-27.html#mistranslation" target="_blank">(<code>mistranslation</code></a>)</em></span></td><td></td></tr>
+<tr><td>omission</td><td><span class="generated-issue-name"><em>Omission <a href="issues-list-2015-05-27.html#omission" target="_blank">(<code>omission</code></a>)</em></span></td><td></td></tr>
+<tr><td>untranslated</td><td><span class="generated-issue-name"><em>Untranslated <a href="issues-list-2015-05-27.html#untranslated" target="_blank">(<code>untranslated</code></a>)</em></span></td><td></td></tr>
+<tr><td>addition</td><td><span class="generated-issue-name"><em>Addition <a href="issues-list-2015-05-27.html#addition" target="_blank">(<code>addition</code></a>)</em></span></td><td></td></tr>
+<tr><td>duplication</td><td><span class="generated-issue-name"><em>Duplication <a href="issues-list-2015-05-27.html#duplication" target="_blank">(<code>duplication</code></a>)</em></span></td><td></td></tr>
+<tr><td>inconsistency</td><td><span class="generated-issue-name"><em>Inconsistency <a href="issues-list-2015-05-27.html#inconsistency" target="_blank">(<code>inconsistency</code></a>)</em></span></td><td></td></tr>
+<tr><td>grammar</td><td><span class="generated-issue-name"><em>Grammar <a href="issues-list-2015-05-27.html#grammar" target="_blank">(<code>grammar</code></a>)</em></span></td><td></td></tr>
+<tr><td>legal</td><td><span class="generated-issue-name"><em>Legal requirements <a href="issues-list-2015-05-27.html#legal-requirements" target="_blank">(<code>legal-requirements</code></a>)</em></span>*</td><td></td></tr>
+<tr><td>register</td><td><span class="generated-issue-name"><em>Grammatical register <a href="issues-list-2015-05-27.html#grammatical-register" target="_blank">(<code>grammatical-register</code></a>)</em></span>*</td><td>Register in ITS can also describe <span class="generated-issue-name"><em>Register <a href="issues-list-2015-05-27.html#register" target="_blank">(<code>register</code></a>)</em></span> (under <span class="generated-issue-name"><em>Style <a href="issues-list-2015-05-27.html#style" target="_blank">(<code>style</code></a>)</em></span>). If a mapping process is sophisticated enough to distinguish the two meanings, it may map to the appropriate issue. Otherwise, use <span class="generated-issue-name"><em>Grammatical register <a href="issues-list-2015-05-27.html#grammatical-register" target="_blank">(<code>grammatical-register</code></a>)</em></span> as it is the more common issue</td></tr>
+<tr><td>locale-specific-content</td><td><span class="generated-issue-name"><em>Locale-specific content <a href="issues-list-2015-05-27.html#locale-specific-content" target="_blank">(<code>locale-specific-content</code></a>)</em></span></td><td></td></tr>
+<tr><td>locale-violation</td><td><span class="generated-issue-name"><em>Locale convention <a href="issues-list-2015-05-27.html#locale-convention" target="_blank">(<code>locale-convention</code></a>)</em></span>*</td><td></td></tr>
+<tr><td>style</td><td><span class="generated-issue-name"><em>Style <a href="issues-list-2015-05-27.html#style" target="_blank">(<code>style</code></a>)</em></span></td><td></td></tr>
+<tr><td>characters</td><td><span class="generated-issue-name"><em>Character encoding <a href="issues-list-2015-05-27.html#character-encoding" target="_blank">(<code>character-encoding</code></a>)</em></span>*</td><td></td></tr>
+<tr><td>misspelling</td><td><span class="generated-issue-name"><em>Spelling <a href="issues-list-2015-05-27.html#spelling" target="_blank">(<code>spelling</code></a>)</em></span>*</td><td></td></tr>
+<tr><td>typographical</td><td><span class="generated-issue-name"><em>Typography <a href="issues-list-2015-05-27.html#typography" target="_blank">(<code>typography</code></a>)</em></span>*</td><td></td></tr>
+<tr><td>formatting</td><td><span class="generated-issue-name"><em>Local formatting <a href="issues-list-2015-05-27.html#local-formatting" target="_blank">(<code>local-formatting</code></a>)</em></span>*</td><td></td></tr>
+<tr><td>inconsistent-entities</td><td><span class="generated-issue-name"><em>Entity (such as name or place) <a href="issues-list-2015-05-27.html#entity" target="_blank">(<code>entity</code></a>)</em></span>*</td><td></td></tr>
+<tr><td>numbers</td><td><span class="generated-issue-name"><em>Number <a href="issues-list-2015-05-27.html#number" target="_blank">(<code>number</code></a>)</em></span>*</td><td></td></tr>
+<tr><td>markup</td><td><span class="generated-issue-name"><em>Markup <a href="issues-list-2015-05-27.html#markup" target="_blank">(<code>markup</code></a>)</em></span></td><td></td></tr>
+<tr><td>pattern-problem</td><td><span class="generated-issue-name"><em>Pattern problem <a href="issues-list-2015-05-27.html#pattern-problem" target="_blank">(<code>pattern-problem</code></a>)</em></span></td><td></td></tr>
+<tr><td>whitespace</td><td><span class="generated-issue-name"><em>Whitespace <a href="issues-list-2015-05-27.html#whitespace" target="_blank">(<code>whitespace</code></a>)</em></span></td><td></td></tr>
+<tr><td>internationalization</td><td><span class="generated-issue-name"><em>Internationalization <a href="issues-list-2015-05-27.html#internationalization" target="_blank">(<code>internationalization</code></a>)</em></span></td><td></td></tr>
+<tr><td>length</td><td><span class="generated-issue-name"><em>Length <a href="issues-list-2015-05-27.html#length" target="_blank">(<code>length</code></a>)</em></span></td><td></td></tr>
+<tr><td>non-conformance</td><td><span class="generated-issue-name"><em>Corpus conformance <a href="issues-list-2015-05-27.html#corpus-conformance" target="_blank">(<code>corpus-conformance</code></a>)</em></span>*</td><td></td></tr>
+<tr><td>uncategorized</td><td><span class="generated-issue-name"><em>Other <a href="issues-list-2015-05-27.html#other" target="_blank">(<code>other</code></a>)</em></span>*</td><td></td></tr>
+<tr><td>other</td><td><span class="generated-issue-name"><em>Other <a href="issues-list-2015-05-27.html#other" target="_blank">(<code>other</code></a>)</em></span></td><td></td></tr>
+				</tbody>
+			</table>
+			<p>Note that the ITS <code>uncategorized</code> category maps to MQM <span class="generated-issue-name"><em>Other <a href="issues-list-2015-05-27.html#other" target="_blank">(<code>other</code></a>)</em></span> even though MQM <span class="generated-issue-name"><em>Other <a href="issues-list-2015-05-27.html#other" target="_blank">(<code>other</code></a>)</em></span> maps to ITS <code>uncategorized</code>. In other words, the mapping is <em>asymmetric</em> because the semantics of <code>uncategorized</code> are broader than <span class="generated-issue-name"><em>Unintelligible <a href="issues-list-2015-05-27.html#unintelligible" target="_blank">(<code>unintelligible</code></a>)</em></span>.</p>
+		</div>
+	</div>
+
+	<div>
+		<h2 id="scoring">8. Scoring (non-normative)</h2>
+		<p>The MQM scoring model applies only to error-count implementations of MQM. At present this specification does not define a default scoring model for holistic systems, which are less detailed in nature than error-count metrics. Future versions, however, MAY define a default model to holistic systems.</p>
+		<p>Note that MQM-conformant tools are NOT required to implement any scoring module at all. For example, an automatic tool that identifies possible issues but which does not determine their severity might not provide a score.</p>
+		<p>This scoring model provides one method to calculate a single quality score as a percentage value. Such scores are frequently used for acceptance testing in translation quality assurance processes. In addition, it generates sub-scores for various aspects of the both the target and, optionally, the source text. Additional scoring methods may apply to specific circumstances. It is RECOMMENDED, but not required, that implementers of MQM provide scores the conform to this section in addition to any other scores they may provide.</p>
+		<div>
+			<h3 id="default-values">8.1. Default severity levels for error-count metrics</h3>
+			<p class="note">Version 0.3.0 made major changes with respect to severity multipliers. These changes render the default scoring for versions 0.3.0 and later incompatible with earlier versions. Version 0.9.1 introduced a new severity level, <em>none</em>, that always has a penalty of 0, i.e., it does not count against the transaltion, it is used to mark items that should be changed, but which are not considered errors for scoring purposes (see below).</p>
+			<p>For the purposes of calculating quality scores, the following default values apply:</p>
+			<dl>
+				<dt>Weight</dt>
+				<dd>All issues have a default weight of 1.0. This weight can be updated on a per-issue basis to reflect specific requirements.</dd>
+				
+				<dt>Severity</dt>
+				<dd>The default severity levels are defined as follows:
+					<ul>
+						<li><strong>none: 0</strong>. Issues with the severity level <em>none</em> are items that need to be noted for further attention or fixing but which should not count against the translation. This severity level can be conceived of as a flag for attention that does not impose a penalty. It should be used for “preferential errors” (i.e, items that are not wrong, per se, but where the reviewer or requester would like to see a different solution), systematic repeated errors that can be easily fixed (e.g., a translator has systematically used an incorrect domain term but it is a simple matter of search and replace to correct them all). Because no penalty is assessed for this level, it is not discussed in the scoring formulae.</li> 
+						<li><strong>minor: 1</strong>. Minor issues are issues that do not impact usability or understandability of the content. For example, if an extra space appears after a full stop, this may be considered an error, but does not render the text difficult to use or problematic (even if it should be corrected). If the typical reader/user is able to correct the error reliably and it does not impact the usability of the content, it SHOULD be classified as minor. Since minor errors do not impact the usability of the content, resolution of them is at the discretion of those responsible for the content.</li>
+						<li><strong>major: 10</strong>. Major issues are issues that impact usability or understandability of the content but which do not render it unusable. For example, a misspelled word may require extra effort for the reader to understand the intended meaning, but do not make it impossible. If an error cannot be reliably corrected by the reader/user (e.g., the intended meaning is not clear) but it does not render the content unfit for purpose, it SHOULD be categorized as major. While it is generally advisable to fix major errors prior to use of the content, the inclusion of major errors may not, by themselves, render the text unfit for purpose.</li>
+						<li><strong>critical: 100</strong>. Critical issues are issues that render the content unfit for use. For example, a particularly bad grammatical error that changes the meaning of the text would be considered critical. If the error prevents the reader/user from using the content as intended or if it presents incorrect information that could result in harm to the user it MUST be categorized as critical. In general, critical errors have to be fixed prior to use of the text since even a single critical error is likely to cause serious problems.</li>
+					</ul>
+				</dd>
+			</dl>
+		</div>
+		<div>
+			<h3 id="scoring-algorithm">8.2 Scoring algorithm</h2>
+			<p>MQM can generate target document quality scores according to the following formula:</p>
+			<div style="text-align:center;">
+				TQ = 100 - TP + SP
+			</div>
+			<p>where:</p>
+			<dl>
+				<dt>TQ = quality score</dt>
+				<dd>The overall rating of quality</dd>
+			
+				<dt>TP = penalties for the target content</dt>
+				<dd>Sum of all weighted penalty points assigned to the target text</dd>
+
+				<dt>SP = penalties for the source content</dt>
+				<dd>Sum of all weighted penalty points assigned to the target text</dd>
+
+			
+			</dl>
+			<p>All penalties are relative to the sample size (in words) and are calculated as follows (assuming default weights and severity levels):</p>
+			<div style="text-align:center">
+				<math xmlns="http://www.w3.org/1998/Math/MathML"><mi>P</mi><mo>=</mo><mfrac><mrow><mo>(</mo><msub><mi>Issues</mi><mi>minor</mi></msub><mo>+</mo><msub><mi>Issues</mi><mi>major</mi></msub><mo>&times;</mo><msub><mi>SeverityMultiplier</mi><mi>major</mi></msub><mo>+</mo><msub><mi>Issues</mi><mi>critical</mi></msub><mo>&times;</mo><msub><mi>SeverityMultiplier</mi><mi>critical</mi></msub><mo>)</mo></mrow><mi>Word count</mi></mfrac></math>
+			</div>
+			<p>where:
+			<table style="borderless">
+				<tr>
+					<td><math xmlns="http://www.w3.org/1998/Math/MathML"><msub><mi>Issues</mi><mi>minor</mi></msub></math></td>
+					<td>= Number of issues with a “minor” severity</td>
+				</tr>
+				<tr>
+					<td><math xmlns="http://www.w3.org/1998/Math/MathML"><msub><mi>Issues</mi><mi>major</mi></msub></math></td>
+					<td>= Number of issues with a “major” severity</td>
+				</tr>
+				<tr>
+					<td><math xmlns="http://www.w3.org/1998/Math/MathML"><msub><mi>Issues</mi><mi>critical</mi></msub></math></td>
+					<td>= Number of issues with a “critical” severity</td>
+				</tr>				
+			</table>
+			<p>A score can thus be generated through the following (pseudo-code) algorithm:</p>
+			<div class="example">
+				<pre>foreach targetIssue {
+	targetIssueTotal = targetIssueTotal +
+	(targetIssue * weight[sourceIssueType] * severityMultiplier);
+}
+
+foreach sourceIssue {
+	sourceIssueTotal = sourceIssueTotal +
+	(sourceIssue * weight[sourceIssueType] * severityMultiplier);
+}
+
+// Generate overall score
+translationQualityScore = 100 - (targetIssueTotal / wordcount) + (sourceIssueTotal / wordcount);</pre>
+			</div>
+			<p>In this algorithm, each issue type has a weight assigned by the metric that is retrieved and used to determine the individual penalties. Penalties are cumulative. Note that if the source is examined, penalties against the source are effectively added to the overall score for the translation, reflecting the fact that they indicate problems in the source the translator had to deal with. If the source is not assessed, the source penalties are by definition 0 and do not count for or against the translation’s quality score.</p>
+			<p>(Scores can be generated for any dimension or branch in the MQM hierarchy by counting only those issues in that selection. Note that counting source issues is optional and that if a score for a source document is desired then the formula should ignore target issues and instead subtract the total of source issues divided by the wordcount from 100 to arrive at a source content score.)</p>
+			<p>This algorithm can serve as a model for other systems, such as metrics with two severity levels or those with four. However, using other models will impede comparability of scores generated by various metrics.</p>
+		</div>		
+		
+		<div>
+			<h3 id="old-default-values">8.3. Default severity multipliers from versions earlier than 0.3.0 (deprecated)</h3>
+			<p>The following severity multipliers were recommended as default multipliers prior to version 0.3.0. The former default severity weights were taken from the LISA QA Model and represent common industry practice. Discussion with experts in psychometrics, however, revealed that the range of values was too close to provide sufficient discrimination between relatively insignificant errors and those considered serious enough to reject a project. As these values were implemented in a number of tools they are documented here:</p>
+			<ul>
+				<li><strong>minor</strong>: 1</li>
+				<li><strong>major</strong>: 5</li>
+				<li><strong>critical</strong>: 10</li>
+			</ul>
+			<p>Scores using these multipliers can be easily updated to reflect the new values simply by changing the multipliers in the formula. Similarly, new scores can be compared with old scores by using this values in place of the new ones. However, as the old multipliers are deprecated, they SHOULD NOT be used as the <em>default</em> model for any new implementations.</p>
+		</div>
+	</div>
+
+	<div>
+		<h2 id="creating-mqm-metrics">9. Creating MQM metrics (non-normative)</h2>
+		<p>This section describes the process for creating an MQM metric in cases where a suitable predefined metric is not available. The process may be graphically represented as shown below:</p>
+		<img src="http://www.qt21.eu/mqm-definition/images/2015-05-27/mqm-model-2015-05-27.png" alt="MQM process overview" />
+		<p>In this view, implementers first determine what sort of metric they wish to use (analytic, holistic, task-based testing, functional testing, etc.) based on the following criteria:</p>
+		<ul>
+			<li><strong>What they are assessing</strong>. Possible options include a translation product (e.g., a translated text or piece of software), a translation process, or a system for producing translation. Depending on what is being assessed, certain methods are more likely than others. Note that some possibilities, such as assessing a process, may be outside the scope of MQM.</li>
+			<li><strong>Who does the assessment</strong>. Possibile options include expert translators, language scholars, community members, and end users. Some methods will be more suitable than others for potential classes of assessors.</li>
+			<li><strong>Where (the context in which) the assessment will take place</strong>. This question helps users understand the requirements for assessment in the particular context. For example, in an academic or research environment, very detailed feedback may be needed that would not be possible to obtain if the assessment is to be done on texts published on a customer portal.</li>
+			<li><strong>When the assessment will take place</strong>. This question asks users to consider the process step in which assessment will be done. Requirements for assessing an initial/draft translation before revision to determine suitability for further work may be different than those for assessing a translation thought to be ready for publication.</li>
+			<li><strong>Why the assessment is being done</strong>. Assessment may be done for many different reasons. For example, it may be done to determine whether a translation is ready for publication, to fix problems in a translation, or to improve a system. Each of these options suggests different possibilities for assessment.</li>
+		</ul>
+		<p>Based on the answers to the questions given above, users may select a method (the “how”) for assessing the translation. Some of the possible options include the following:</p>
+		<ul>
+			<li><strong>Analytic</strong>. Analytic approaches involve the identification of specific issues in text. These approaches are detail-oriented and are particularly suited for the detection and repair of individual errors. This approach is also time- and labor-intensive, although in some cases analytic approached may be partially or entirely automated. Analytic approaches typically require training and are best suited for expert assessors or cases where detailed information is needed to improve systems or processes. They are generally less suitable for assessment by end-user or community members.</li>
+			<li><strong>Holistic</strong>. Holistic approaches consider the text (or portions of the text) as a whole. Rather than identifying specific locations in the text with problems, they evaluate the overall quality of the text with respect to specific criteria. There are two sub-types of holistic assessment methods:
+				<ul>
+					<li><strong>Simple/mono-dimensional</strong>. Simple or mono-dimensional holistic approaches assess the text on a single criterion. For example, a mono-dimensional holistic approach might ask the assessors to rate the translated text on a scale from one to five based on how good a translation they find it, with no other criteria or aspects. These approaches are particularly suitable for community or end-user evaluation where more complex assessment methods would most likely be ignored.</li>
+					<li><strong>Complex/multi-dimensional</strong>. In complex or multidimensional approaches, assessors are asked to evaluate the text on multiple criteria. Depending on the number of criteria, such assessment may be appropriate for various classes of evaluators, but the more criteria are features, the more training of assessors will be required.</li>
+				</ul>
+			</li>
+			<li><strong>Task-based testing</strong>. Task-based testing evaluates how well the translation serves to assist a users to accomplish a task. It is particularly useful for determining problems with textual verity. In a simple form it may be equivalent to a simple holistic approach (e.g., if users are asked “Did this (translated) text answer your question adequately?”). Complex task-based testing is a discipline in its own right and is not generally covered in MQM, although aspects of task-based testing may be related to MQM issue types.</li>
+			<li><strong>Functional testing</strong>. Functional testing evaluates whether a translated produce functions as expected. It is most suitable for evaluating translated applications or other products that combine translation with other functions. Functional testing is beyond the scope of MQM, although, as with usage testing, it may relate to MQM issue types.</li>
+		</ul>
+		<p>In addition to selecting an assessment method based on the answers to the questions on the left of the diagram, users also need to define the specifications (i.e., the values of the parameters) for the translation(s) to be assessed. (The MQM parameters are defined in <a href="#parameters">section 8.2. Definition of MQM parameters</a> below.) Based on the specifications, users decide which dimensions of the text will be assessed. Dimensions defined in MQM are the following:</p>
+		<ul>
+			<li>Accuracy</li>
+			<li>Design</li>
+			<li>Fluency</li>
+			<li>Internationalization</li>
+			<li>Locale convention</li>
+			<li>Style</li>
+			<li>Terminology</li>
+			<li>Verity</li>
+		</ul>
+		<p>Note that the dimensions correspond to top-level branches in the MQM hierarchy.</p>
+		<p>Depending upon which dimensions are selected and the degree of granularity required for the assessment task, MQM issues are then selected to ensure that the required dimensions are adequately assessed. In the case of <span class="generated-issue-name"><em>Internationalization <a href="issues-list-2015-05-27.html#internationalization" target="_blank">(<code>internationalization</code></a>)</em></span> it is likely that different assessment methods will be needed since internationalization cannot generally be assessed from examining texts (versus doing a code audit).</p>
+		
+		<div>
+			<h3 id="selection-example">9.1. Example of defining a metric</h3>
+			<p>The following example will help clarify how the process works. The example is for a case in which a company that makes network diagnostic gear wishes to evaluate whether automatic (machine) translations into Japanese of user-generated forum content written in English is helping their Japanese users solve technical problems with their equipment.</p>
+			<ol>
+				<li><strong>Selection of assessment method</strong>.
+					<ol>
+						<li>What: The company wishes to assess a translation product (the forum content) and also the MT system they are using to translate the content.</li>
+						<li>Who: The company wants to use its customers to evaluate the translation since they are the only ones who can determine whether the content meets their needs.</li>
+						<li>Where: The assessment must be done on the user-to-user forum with end users who are not experts in translation or language and who cannot be trained in advance.</li>
+						<li>When: The assessment will take place after texts have already been published on the website. The texts will be raw MT output with no post-editing or other correction.</li>
+						<li>Why: The assessment will be used to determine if the MT system’s results help users meet their needs or whether more manual processes (e.g., MT + post-editing) are required.</li>
+					</ol>
+					<br />Based on these answers, the company decides to use a holistic assessment method with a low number of dimensions (no more than three).</li>
+				<li><strong>Creating the specifications</strong>. The company fills out a worksheet to define the values for the parameters in their specification (described in <a href="#parameters">section 8.2. Definition of MQM parameters</a> below) and creates a full set of translation specifications.</li>
+				<li><strong>Selection of Dimensions</strong>. Based on their translation specifications they determine that the following dimensions are relevant to this task: Accuracy, Fluency, and Verity. Because of the nature of the assessment method and the assessors, however, the company decides to limit assessment to three issues: Terminology, Fluency, and Verity. Although Accuracy is highly important, they cannot expect their users to understand English well enough to assess the accuracy of translated texts.</li>
+				<li><strong>Building the metric</strong>. Based on the selection of a holistic metric and three issues, the company selects three issue types and implements a metric with three questions on their website at the end of each translated forum entry:
+					<ol>
+						<li>Did this answer enable you to solve your problem? (Yes/No) <em>(Addresses Verity)</em></li>
+						<li>Was this answer grammatically correct? (Yes/No) <em>(Addresses Grammar)</em></li>
+						<li>Did this answer use the correct words to describe your product and the solution? (Yes/No) <em>(Addresses Terminology)</em></li>
+					</ol>
+					<br />In addition, because the company realizes that their customers cannot assess some core aspects and help them evaluate their MT system, they decide to create a second, analytic metric for human assessors to check a subset of the output.
+				</li>
+			</ol>
+			<p>Although simple, this example, shows how it is possible to build customized metrics to meet specific requirements using MQM.</p>
+		</div>
+		
+		<div>
+			<h3 id="parameters">9.2. Definition of MQM parameters</h3>
+			<p>MQM makes use of a selection of 11 of the 21 parameters defined in ASTM F2575, with the addition of one additional parameter, Output modality, which is subsumed under <em>Text type</em> in ASTM F2575 but which is broken out in MQM because of its special impact on some translationed. The parameters are defined as follows:</p>
+
+			<table class="tabular">
+				<tr>
+					<th>Parameter</th>
+					<th>Description</th>
+				</tr>
+	
+				<tr>
+					<th class="parameterName" id="language">1. Language/locale</th>
+					<td class="parameterDescription">
+						<dl>
+							<dt>Definition:</dt>
+							<dd>The language into which the text is to be translated</dd>
+							<dt>Note/Explanation:</dt>
+							<dd>This parameter should specify geographical language variants where appropriate.</dd>
+							<dt>Examples:</dt>
+							<dd>
+								<ul>
+									<li>the text is to be translated into Swiss German (de-CH)</li>
+									<li>the text is to be translated into Cantonese as spoken in Hong Kong using Traditional Chinese characters (zh-HK-Hant)</li>
+								</ul>
+							</dd>
+						</dl>
+					</td>
+				</tr>
+
+				<tr>
+					<th class="parameterName" id="subject-field">2. Subject field/domain</th>
+					<td class="parameterDescription">
+						<dl>
+							<dt>Definition:</dt>
+							<dd>Subject field(s) (domain(s)) of the source text</dd>
+							<dt>Note/Explanation:</dt>
+							<dd>This information should be as specific as possible to assist translation providers in finding the best translators for the job</dd>
+							<dt>Examples:</dt>
+							<dd>
+								<ul>
+									<li>the text is a specialized text dealing with meteorological science</li>
+									<li>the text is a sixteenth-century legal text regarding fishing rights in the North Sea</li>
+								</ul>
+							</dd>
+						</dl>
+					</td>
+				</tr>
+
+				<tr>
+					<th class="parameterName" id="terminology">3. Teminology</th>
+					<td class="parameterDescription">
+						<dl>
+							<dt>Definition:</dt>
+							<dd>List of terms or reference to terms to be used</dd>
+							<dt>Note/Explanation:</dt>
+							<dd>These terms are domain- or project-specific ones</dd>
+							<dt>Examples:</dt>
+							<dd>
+								<ul>
+									<li>the requester provides instructions to see a website that defines many of the domain-specific terms in the project</li>
+									<li>the requester states that specialist physics terms are to be used</li>
+								</ul>
+							</dd>
+						</dl>
+					</td>
+				</tr>
+	
+				<tr>
+					<th class="parameterName" id="text-type">4. Text type</th>
+					<td class="parameterDescription">
+						<dl>
+							<dt>Definition:</dt>
+							<dd>The type of the source content</dd>
+							<dt>Note/Explanation:</dt>
+							<dd>Needed to locate resources with the appropriate linguistic skills. For example, a translator who specializes in technical translations may not be ideal to translate a compilation of 12th-century religious poems.<br /> <br />Note that “Text type” is known as “Form of the text” in ASTM F2575</dd>
+							<dt>Examples:</dt>
+							<dd>
+								<ul>
+									<li>user manual</li>
+									<li>literary novel set in medieval Ireland</li>
+								</ul>
+							</dd>
+						</dl>
+					</td>
+				</tr>
+	
+				<tr>
+					<th class="parameterName" id="audience">5. Audience</th>
+					<td class="parameterDescription">
+						<dl>
+							<dt>Definition:</dt>
+							<dd>The project’s target audience</dd>
+							<dt>Note/Explanation:</dt>
+							<dd>The audience should be described or defined as precisely as possible without being too restrictive</dd>
+							<dt>Examples:</dt>
+							<dd>
+								<ul>
+									<li>business analysts with a background in Russian mineral exploration activity</li>
+									<li>teenage users of tablet computers</li>
+								</ul>
+							</dd>
+						</dl>
+					</td>
+				</tr>
+
+				<tr>
+					<th class="parameterName" id="purpose">6. Purpose</th>
+					<td class="parameterDescription">
+						<dl>
+							<dt>Definition:</dt>
+							<dd>statement of the purpose or intended use of the translation</dd>
+							<dt>Note/Explanation:</dt>
+							<dd>This information is useful in helping the translator decide the appropriate manner in which to translate the text. In some cases the purpose of the translation may differ significantly from the purpose of the source text.</dd>
+							<dt>Examples:</dt>
+							<dd>
+								<ul>
+									<li>the text is intended for entertainment, to transmit information, or to persuade an audience of a political point</li>
+									<li>the source text was written to convince youth to join a political movement but the translation is to used by foreign journalists to help them understand the goals of this political movement</li>
+								</ul>
+							</dd>
+						</dl>
+					</td>
+				</tr>
+
+				<tr>
+					<th class="parameterName" id="register-param">7. Register</th>
+					<td class="parameterDescription">
+						<dl>
+							<dt>Definition:</dt>
+							<dd>Description of the linguistic register to be used in the target language</dd>
+							<dt>Note/Explanation:</dt>
+							<dd>Register is often difficult to infer from the source text and must be defined on a per-language basis</dd>
+							<dt>Examples:</dt>
+							<dd>
+								<ul>
+									<li>the text is an informal conversation between friends and should be translated in German using the <em>du</em> form</li>
+									<li>the text is a formal letter to the Hungarian ambassador and should be translated using the <em>Őn</em> pronouns and very formal honorifics, salutations, and grammatical structures</li>
+								</ul>
+							</dd>
+						</dl>
+					</td>
+				</tr>
+	
+				<tr>
+					<th class="parameterName" id="style-param">8. Style</th>
+					<td class="parameterDescription">
+						<dl>
+							<dt>Definition:</dt>
+							<dd>Information about the document’s style.</dd>
+							<dt>Note/Explanation:</dt>
+							<dd>Could include formal style guides, references to comparable documents, or other clear indications of style expectations</dd>
+							<dt>Examples:</dt>
+							<dd>
+								<ul>
+									<li>the text is a promotional piece for investors and style is highly relevant, with the translation trying to capture an air of excitement</li>
+									<li>the text is intended for use by technicians in a service environment and style is considered irrelevant</li>
+									<li>the text is to be published by a press with very specific in-house style rules that must be followed</li>
+								</ul>
+							</dd>
+						</dl>
+					</td>
+				</tr>
+
+				<tr>
+					<th class="parameterName" id="content-correspondence">9. Content correspondence</th>
+					<td class="parameterDescription">
+						<dl>
+							<dt>Definition:</dt>
+							<dd>Specifies how the content is to be translated</dd>
+							<dt>Note/Explanation:</dt>
+							<dd>The default assumption is that text is to be fully translated and adapted to the target locale (a <em>covert</em>, <em>localized</em> translation). In some instances, requesters may ask for partial or summary translations</dd>
+							<dt>Examples:</dt>
+							<dd>
+								<ul>
+									<li>a British English text should be fully translated into German but all prices should be left in pounds sterling rather than converted to euros</li>
+									<li>a marketing text should be heavily adapted to match target language conventions, with the translator free to rewrite portions as needed to appeal to the audience</li>
+									<li>the text should be translated as a summary that presents the main points but leaves out details</li>
+								</ul>
+							</dd>
+						</dl>
+					</td>
+				</tr>
+				<tr>
+					<th class="parameterName" id="output-modality">10. Output modality</th>
+					<td class="parameterDescription">
+						<dl>
+							<dt>Definition:</dt>
+							<dd>Information about the way in which the translated text will be displayed/presented</dd>
+							<dt>Note/Explanation:</dt>
+							<dd>This parameter provides information about the specific environments in which the text will be output and any limitations or special requirements they may impose.</dd>
+							<dt>Examples:</dt>
+							<dd>
+								<ul>
+									<li>the text is to be output as captions on a YouTube video</li>
+									<li>the text will be used in voice prompts for a telephone dialogue system with a female voice reading the prompts</li>
+									<li>the text will be displayed on an embedded LCD screen of a device and is limited to a length of 25 characters</li>
+								</ul>
+							</dd>
+						</dl>
+					</td>
+				</tr>
+				<tr>
+					<th class="parameterName" id="file-format">11. File format</th>
+					<td class="parameterDescription">
+						<dl>
+							<dt>Definition:</dt>
+							<dd>The file format(s) in which the translated content is to be delivered</dd>
+							<dt>Note/Explanation:</dt>
+							<dd>It is quite common for the target file format to differ from the source file format</dd>
+							<dt>Examples:</dt>
+							<dd>
+								<ul>
+									<li>the translator is asked to translate a text in an InDesign file but to return the translation as an RTF text</li>
+									<li>the translator is to return text in Microsoft Word (.docx) format and graphics in layered TIFF format</li>
+								</ul>
+							</dd>
+						</dl>
+					</td>
+				</tr>
+				<tr>
+					<th class="parameterName" id="production-technology">12. Production technology</th>
+					<td class="parameterDescription">
+						<dl>
+							<dt>Definition:</dt>
+							<dd>Any technology or software to be used in the translation process</dd>
+							<dt>Note/Explanation:</dt>
+							<dd>May be generic or specific as to particular translation tools.<br /> <br />Production technology is included, even though it is not a product parameter, because specific technologies may have an impact on likely issues in the target texts they produce.</dd>
+							<dt>Examples:</dt>
+							<dd>
+								<ul>
+									<li>the project is to be completed using a translation memory tool of the translator’s choice</li>
+									<li>the translation must use TTC TermBase v3</li>
+								</ul>
+							</dd>
+						</dl>
+					</td>
+				</tr>
+			</table>
+		</div>
+		<p>After the values for these parameters are fully specified, MQM implementers should verify that the selection of issue types will ensure that the requirements defined by the parameters are met. Note that parameters may override each other. For example, under <strong>Content correspondence</strong> the parameters might specify that a “gist” translation is acceptable, in which case <span class="generated-issue-name"><em>Omission <a href="issues-list-2015-05-27.html#omission" target="_blank">(<code>omission</code></a>)</em></span> would not normally be assessed; however if <strong>Audience</strong> specifies that the target audience consists of young readers with low literacy, <span class="generated-issue-name"><em>Style <a href="issues-list-2015-05-27.html#style" target="_blank">(<code>style</code></a>)</em></span> might be assessed to assure that the “simple” style needed for the target audience is achieved.</p>
+		<p>At this stage in MQM development, there are no normative guidelines for selecting issues. Instead implementers are encouraged to go through each parameter to identify project-relevant issues that will enable them to verify whether the translation meets the requirements set out in those parameters. Future versions of MQM may provide a more formal approach to issue selection.</p>
+		<div>
+			<h3 id="error-count">9.3. Analytic metrics</h3>
+			<p>Analytic metrics are created by making a selection of relevant issues from the listing of MQM issue types. The following procedure may be used to create a metric:</p>
+			<ol>
+				<li>Complete a full set of project specifications, including the 12 MQM parameters. Ensure that all stakeholders are in agreement about the values of the parameters. (Note that the value of some parameters, such as the target language, may change from project to project, so implementers should consider the range of likely values. For example, if a project will be translated into 15 languages, the impact each language might have should be considered.)</li>
+				<li>For the value of each parameter, consider what features of the text would be needed to verify that the text meets specifications and note these issue types down. Note that “doesn’t matter” is an acceptable value for many parameters and if this value is chosen, the parameter may be skipped. (E.g., if <strong>Style</strong> is judged to be insignificant, then this parameter will be skipped in assessment.</li>
+				<li>After deciding what features need to be checked, determine which issue types can be used to assess that feature and note these types.</li>
+				<li>From the list of issue types, prioritize them based on the importance of each parameter and then make a selection of issue types based on this list and the priorities. (Note that it may be impractical to do fine-grained analysis of every potential issue type identified. Feedback from LSPs suggests that six to seven issue types is sufficient for most assessment tasks, although some use up to twenty.</li>
+				<li>If a score is to be assigned, assign weights to the issues. Assigning weights is a tricky process and should be done by assessing existing translations deemed to be acceptable, borderline acceptable, and unacceptable to see what impact each issue type has on that judgment. Note that some existing metrics, such as SAE J2450, have predefined weights that should be honored. The default issue weight in MQM is 1.0 and any positive decimal value may be used.</li>
+				<li>If the resulting metric is to be implemented in an MQM-compliant tool chain, it should be declared as described in <a href="#mqm_metric_description">Section 7.1. MQM metrics description</a>.</li>
+			</ol>
+			<p>When considering which issues to check, creators of metrics should consider the following practical guidelines:</p>
+			<ol>
+				<li>Are there any requirements for compatibility with legacy systems or standard/semi-standard specifications? If so, choose issue types that correspond to those used by those systems/specifications. In most cases it is possible to emulate legacy metrics in MQM with little or no modification, although some might require the use of custom extensions.</li>
+				<li>Select the least granular issue types that allow assessment of whether the text meets specifications. For example, in many cases use of the category <span class="generated-issue-name"><em>Grammar <a href="issues-list-2015-05-27.html#grammar" target="_blank">(<code>grammar</code></a>)</em></span> would be sufficient because it is not particularly relevant to know what subcategory is used. On the other hand, when trying to diagnose problems generated by an MT system, finer-grained types might be necessary.</li>
+				<li>When possible, choose issues from the MQM Core. Using these issues helps ensure compatibility. However, the Core does not cover all cases, including common ones such as checking formatting, because it is focused on text translations.</li>
+				<li>Consider not just requirements for one set of specifications/parameters, but also for other likely sets. For example, if two types of translations are frequently assessed, it may make sense to develop one list of issues with different sets of weights and to use the single (master) set of issues. This practice is recommended to prevent the need to train evaluators on multiple metrics.</li>
+			</ol>
+		</div>
+		<div>
+			<h3 id="holistic">9.4. Holistic metrics</h3>
+			<p>Holistic assessment methods are more flexible in some respects than error-count metrics. They are designed to provide an assessment of the translated text as a whole rather than a detailed accounting of all errors. As analytic assessment can be time consuming and is not needed in all cases (e.g., when the question is whether a text should be accepted or not), holistic methods may be more appropriate in some cases. Most of the MQM issue types can be easily used as either analytic types or holistic types that apply to the text as a whole. For example, the MQM <span class="generated-issue-name"><em>Punctuation <a href="issues-list-2015-05-27.html#punctuation" target="_blank">(<code>punctuation</code></a>)</em></span> issue type can be used by asking assessors using a holistic tool whether the text is punctuated correctly. In this context some issues will be more useful than others. For example, the <span class="generated-issue-name"><em>Pattern problem <a href="issues-list-2015-05-27.html#pattern-problem" target="_blank">(<code>pattern-problem</code></a>)</em></span> issue type is unlikely to be useful in most holistic assessments since it generally makes sense only with regard to very specific sections of a text. By contrast, categories like <span class="generated-issue-name"><em>Grammar <a href="issues-list-2015-05-27.html#grammar" target="_blank">(<code>grammar</code></a>)</em></span> can more readily be applied to entire texts.</p>
+			<p>Note that there is no single method for building holistic scores. In a holistic approach specific issues are addressed through qualitative questions that may be assessed via ranking or on a binary- or scalar-value system. For example, a holistic assessment might address the <span class="generated-issue-name"><em>Spelling <a href="issues-list-2015-05-27.html#spelling" target="_blank">(<code>spelling</code></a>)</em></span> issue via questions like the following:</p>
+			<ul>
+				<li>The translated text is spelled correctly:<br />[ ] Yes<br />[ ] No</li>
+				<li>The translated text is spelled correctly:<br />[ ] Strongly disagree<br />[ ] Disagree<br />[ ] Neither disagree nor agree<br />[ ] Agree<br />[ ] Strongly agree</li>
+				<li>Does the translated text meet expectations with regard to correct spelling?<br />[ ] The text does <em>not</em> meet expectations<br />[ ] The text meets expectations<br />[ ] The text exceeds expectations</li>
+			</ul>
+			<p>Because the scoring for holistic systems is highly dependent on the type of assessment scale used, no specific scoring system is provided here. Users of MQM who wish to implement it in a holistic environment should tie holistic questions to specific MQM issue types and develop appropriate scoring systems. This version of MQM does not define a system for describing holistic scoring systems, although future versions may do so. However, by using the MQM issue types and associating specific holistic questions with them, implementers can make their metrics more transparent and tie them to project parameters in the same way that can be done with error-count metrics.</p>
+			<p>The following guidelines may assist in designing appropriate holistic assessments and selecting issue types:</p>
+			<ul>
+				<li><strong>Use the highest-level issues that suffice to provide the needed assessment</strong>. For example, “Is the text translated accurately?” (assessing <span class="generated-issue-name"><em>Mistranslation <a href="issues-list-2015-05-27.html#mistranslation" target="_blank">(<code>mistranslation</code></a>)</em></span>) is more likely to be answered accurately than “Does the text show any problems related to ‘false friends’?” (assessing <span class="generated-issue-name"><em>False friend <a href="issues-list-2015-05-27.html#false-friend" target="_blank">(<code>false-friend</code></a>)</em></span>), especially as false friends are less likely to occur than generalized mistranslation. However, for some assessment purposes, fine-grained holistics may be appropriate.</li>
+				<li><strong>Write holistic statements or questions that clearly address the desired issue type</strong>. For example, “Does the text comply with specified guidelines for style?” is more likely to obtain an accurate assessment for <span class="generated-issue-name"><em>Style <a href="issues-list-2015-05-27.html#style" target="_blank">(<code>style</code></a>)</em></span> than “Does the text read well?”, which is vague in its intent.</li>
+				<li><strong>Design holistic questions that allow assessors to give credit, not just penalties</strong>. Holistic assessment tools often allow assessors to indicate that a text outperforms expectations in order to give credit for jobs well done. Using scalars that give translators credit is in line with the MQM principle of fairness and is roughly analogous to the MQM practice of assigning credits to translators for errors detected in the source.</li> 
+			</ul>
+		</div>
+</div>
+	<div>
+		<h3 id="dqf-mapping">10. TAUS DQF subset (non-normative)</h3>
+		<p>The TAUS DQF Error Typology is a recognized subset of MQM, developed and maintained by the Translation Automation User Society (TAUS) based on input from its members.
+		<p>Previous versions of TAUS DQF and MQM were not compatible. As of revision 0.9, compatibility between the two has been achieved. The harmonization process required substantial modification to both MQM and DQF, but now DQF, with the exception of the “kudos” feature noted below, is a fully conformant subset of MQM.</p>
+		<p>The DQF tools check six issue types. If only these issue types are used, they correspond directly to MQM dimensions, as follows:</p>
+		<ul>
+			<li>DQF <em>Accuracy</em> (formerly <em>Adequacy</em>) = MQM <span class="generated-issue-name"><em>Accuracy <a href="issues-list-2015-05-27.html#accuracy" target="_blank">(<code>accuracy</code></a>)</em></span></li>
+			<li>DQF <em>Design</em> (formerly <em>Layout</em>) = MQM <span class="generated-issue-name"><em>Design <a href="issues-list-2015-05-27.html#design" target="_blank">(<code>design</code></a>)</em></span></li>
+			<li>DQF <em>Fluency</em> (formerly <em>Language</em>) = MQM <span class="generated-issue-name"><em>Fluency <a href="issues-list-2015-05-27.html#fluency" target="_blank">(<code>fluency</code></a>)</em></span></li>
+			<li>DQF <em>Locale convention</em> (formerly <em>Country standards</em>) = MQM <span class="generated-issue-name"><em>Locale convention <a href="issues-list-2015-05-27.html#locale-convention" target="_blank">(<code>locale-convention</code></a>)</em></span></li>
+			<li>DQF <em>Style</em> = MQM <span class="generated-issue-name"><em>Style <a href="issues-list-2015-05-27.html#style" target="_blank">(<code>style</code></a>)</em></span></li>
+			<li>DQF <em>Terminology</em> = MQM <span class="generated-issue-name"><em>Terminology <a href="issues-list-2015-05-27.html#terminology" target="_blank">(<code>terminology</code></a>)</em></span></li>
+		</ul>
+		<p>MQM also supports additional levels of issues, as shown in the following graphic:</p>
+		<a href="images/2015-05-27/dqf-subset-2015-05-27.svg"><img src="images/2015-05-27/dqf-subset-2015-05-27.png" alt="DQF MQM-compliant error typology" /></a>
+		<p>The DQF “Additional Features” require special attention. Three of the issues can be marked as issues with the severity level “none” and the specific type noted in an MQM-compliant tool or markup:
+		<ul>
+			<li><em>Client edit</em>, used to mark changes requested by the client</li>
+			<li><em>Query implementation</em>, used to mark changes made in response to queries to the client</li>
+			<li><em>Repeat</em>, used to mark systematic repetition of errors that should not be counted against the translation</li>
+		</ul>
+		<p>Using these allows issues to be marked without counting negatively in the score of the translation.</p>
+		<p>One DQF feature is not currently implemented in MQM and can be conceived of as an additional implementation-specific feature:</p>
+		<ul>
+			<li><em>Kudos</em>, used to mark a positive item in the translation to give credit to the translator.</li>
+		</ul>
+		<p>Kudos currently need to be noted outside of MQM mechanisms. Whether and how they impact an MQM score is currently undefined and represents a point of ongoing discussion as of June 2015.</p>
+		<p>The full DQF subset of MQM is as follows:</p>
+<ul>
+	<li><span class="generated-issue-name"><em>Accuracy <a href="issues-list-2015-05-27.html#accuracy" target="_blank">(<code>accuracy</code></a>)</em></span>		<ul>
+			<li><span class="generated-issue-name"><em>Addition <a href="issues-list-2015-05-27.html#addition" target="_blank">(<code>addition</code></a>)</em></span></li>
+			<li><span class="generated-issue-name"><em>Improper exact TM match <a href="issues-list-2015-05-27.html#improper-exact-tm-match" target="_blank">(<code>improper-exact-tm-match</code></a>)</em></span></li>
+			<li><span class="generated-issue-name"><em>Mistranslation <a href="issues-list-2015-05-27.html#mistranslation" target="_blank">(<code>mistranslation</code></a>)</em></span>				<ul>
+					<li><span class="generated-issue-name"><em>Ambiguous translation <a href="issues-list-2015-05-27.html#ambiguous-translation" target="_blank">(<code>ambiguous-translation</code></a>)</em></span></li>
+					<li><span class="generated-issue-name"><em>Mistranslation of technical relationship <a href="issues-list-2015-05-27.html#technical-relationship" target="_blank">(<code>technical-relationship</code></a>)</em></span></li>
+					<li><span class="generated-issue-name"><em>Overly literal <a href="issues-list-2015-05-27.html#overly-literal" target="_blank">(<code>overly-literal</code></a>)</em></span></li>
+				</ul>
+			</li>
+			<li><span class="generated-issue-name"><em>Omission <a href="issues-list-2015-05-27.html#omission" target="_blank">(<code>omission</code></a>)</em></span>				<ul>
+					<li><span class="generated-issue-name"><em>Omitted variable <a href="issues-list-2015-05-27.html#omitted-variable" target="_blank">(<code>omitted-variable</code></a>)</em></span></li>
+				</ul>
+			</li>
+			<li><span class="generated-issue-name"><em>Untranslated <a href="issues-list-2015-05-27.html#untranslated" target="_blank">(<code>untranslated</code></a>)</em></span></li>
+		</ul>
+	</li>
+    <li><span class="generated-issue-name"><em>Design <a href="issues-list-2015-05-27.html#design" target="_blank">(<code>design</code></a>)</em></span>    	<ul>
+			<li><span class="generated-issue-name"><em>Length <a href="issues-list-2015-05-27.html#length" target="_blank">(<code>length</code></a>)</em></span></li>
+			<li><span class="generated-issue-name"><em>Local formatting <a href="issues-list-2015-05-27.html#local-formatting" target="_blank">(<code>local-formatting</code></a>)</em></span></li>
+			<li><span class="generated-issue-name"><em>Markup <a href="issues-list-2015-05-27.html#markup" target="_blank">(<code>markup</code></a>)</em></span></li>
+			<li><span class="generated-issue-name"><em>Missing text <a href="issues-list-2015-05-27.html#missing-text" target="_blank">(<code>missing-text</code></a>)</em></span></li>
+			<li><span class="generated-issue-name"><em>Truncation/text expansion <a href="issues-list-2015-05-27.html#truncation-text-expansion" target="_blank">(<code>truncation-text-expansion</code></a>)</em></span></li>
+		</ul>
+	</li>
+    <li><span class="generated-issue-name"><em>Fluency <a href="issues-list-2015-05-27.html#fluency" target="_blank">(<code>fluency</code></a>)</em></span>    	<ul>
+			<li><span class="generated-issue-name"><em>Character encoding <a href="issues-list-2015-05-27.html#character-encoding" target="_blank">(<code>character-encoding</code></a>)</em></span></li>
+			<li><span class="generated-issue-name"><em>Grammatical register <a href="issues-list-2015-05-27.html#grammatical-register" target="_blank">(<code>grammatical-register</code></a>)</em></span></li>
+			<li><span class="generated-issue-name"><em>Grammar <a href="issues-list-2015-05-27.html#grammar" target="_blank">(<code>grammar</code></a>)</em></span></li>
+			<li><span class="generated-issue-name"><em>Inconsistency <a href="issues-list-2015-05-27.html#inconsistency" target="_blank">(<code>inconsistency</code></a>)</em></span>				<ul>
+					<li><span class="generated-issue-name"><em>Inconsistent with external reference <a href="issues-list-2015-05-27.html#external-inconsistency" target="_blank">(<code>external-inconsistency</code></a>)</em></span></li>
+				</ul>
+			</li>
+			<li><span class="generated-issue-name"><em>Link/cross-reference <a href="issues-list-2015-05-27.html#broken-link" target="_blank">(<code>broken-link</code></a>)</em></span></li>
+			<li><span class="generated-issue-name"><em>Punctuation <a href="issues-list-2015-05-27.html#punctuation" target="_blank">(<code>punctuation</code></a>)</em></span></li>
+			<li><span class="generated-issue-name"><em>Spelling <a href="issues-list-2015-05-27.html#spelling" target="_blank">(<code>spelling</code></a>)</em></span></li>
+		</ul>
+	</li>
+    <li><span class="generated-issue-name"><em>Locale convention <a href="issues-list-2015-05-27.html#locale-convention" target="_blank">(<code>locale-convention</code></a>)</em></span>    	<ul>
+			<li><span class="generated-issue-name"><em>Address format <a href="issues-list-2015-05-27.html#address-format" target="_blank">(<code>address-format</code></a>)</em></span>				<ul>
+					<li><span class="generated-issue-name"><em>Postal code <a href="issues-list-2015-05-27.html#postal-code" target="_blank">(<code>postal-code</code></a>)</em></span></li>
+				</ul>
+			</li>
+			<li><span class="generated-issue-name"><em>Date format <a href="issues-list-2015-05-27.html#date-format" target="_blank">(<code>date-format</code></a>)</em></span></li>
+			<li><span class="generated-issue-name"><em>Currency format <a href="issues-list-2015-05-27.html#currency-format" target="_blank">(<code>currency-format</code></a>)</em></span></li>
+			<li><span class="generated-issue-name"><em>Measurement format <a href="issues-list-2015-05-27.html#measurement-format" target="_blank">(<code>measurement-format</code></a>)</em></span></li>
+			<li><span class="generated-issue-name"><em>Shortcut key <a href="issues-list-2015-05-27.html#shortcut-key" target="_blank">(<code>shortcut-key</code></a>)</em></span></li>
+			<li><span class="generated-issue-name"><em>Telephone format <a href="issues-list-2015-05-27.html#telephone-format" target="_blank">(<code>telephone-format</code></a>)</em></span></li>
+		</ul>
+	</li>
+    <li><span class="generated-issue-name"><em>Style <a href="issues-list-2015-05-27.html#style" target="_blank">(<code>style</code></a>)</em></span>    	<ul>
+			<li><span class="generated-issue-name"><em>Awkward <a href="issues-list-2015-05-27.html#awkward" target="_blank">(<code>awkward</code></a>)</em></span></li>
+			<li><span class="generated-issue-name"><em>Company style <a href="issues-list-2015-05-27.html#company-style" target="_blank">(<code>company-style</code></a>)</em></span></li>
+			<li><span class="generated-issue-name"><em>Inconsistent style <a href="issues-list-2015-05-27.html#inconsistent-style" target="_blank">(<code>inconsistent-style</code></a>)</em></span></li>
+			<li><span class="generated-issue-name"><em>Third-party style <a href="issues-list-2015-05-27.html#third-party-style" target="_blank">(<code>third-party-style</code></a>)</em></span></li>
+			<li><span class="generated-issue-name"><em>Unidiomatic <a href="issues-list-2015-05-27.html#unidiomatic" target="_blank">(<code>unidiomatic</code></a>)</em></span></li>
+		</ul>
+	</li>
+    <li><span class="generated-issue-name"><em>Terminology <a href="issues-list-2015-05-27.html#terminology" target="_blank">(<code>terminology</code></a>)</em></span>    	<ul>
+			<li><span class="generated-issue-name"><em>Inconsistent with termbase <a href="issues-list-2015-05-27.html#termbase" target="_blank">(<code>termbase</code></a>)</em></span>				<ul>
+					<li><span class="generated-issue-name"><em>Company terminology <a href="issues-list-2015-05-27.html#terminology-company" target="_blank">(<code>terminology-company</code></a>)</em></span></li>
+					<li><span class="generated-issue-name"><em>Third-party termbase <a href="issues-list-2015-05-27.html#terminology-third-party" target="_blank">(<code>terminology-third-party</code></a>)</em></span></li>
+				</ul>
+			</li>
+			<li><span class="generated-issue-name"><em>Inconsistent use of terminology <a href="issues-list-2015-05-27.html#term-inconsistency" target="_blank">(<code>term-inconsistency</code></a>)</em></span></li>
+		</ul>
+	</li>
+    <li><span class="generated-issue-name"><em>Verity <a href="issues-list-2015-05-27.html#verity" target="_blank">(<code>verity</code></a>)</em></span>    	<ul>
+			<li><span class="generated-issue-name"><em>Culture-specific reference <a href="issues-list-2015-05-27.html#culture-specific" target="_blank">(<code>culture-specific</code></a>)</em></span></li>
+		</ul>
+	</li>
+</ul>
+	</div>
+
+	<div>
+		<h2 id="mappings">11. Mappings of existing metrics to MQM (non-normative)</h2>
+		<p>This section contains informative mappings from existing metrics to MQM. Note that existing metrics are subject to update without notice. These mappings are provided as a courtesy and no guarantee is made of accuracy and completeness. Any implementations based on these mappings should carefully consider the metric to verify the accuracy of mappings.</p>
+		<div>
+			<h3 id="saej2450-mapping">11.1. SAE J2450</h3>
+			<p>The mapping from SAE J2450 is somewhat complex in that the distinction between severity levels is, in part, based on the whether the issue changes the meaning between target and source, meaning that—at least in principle—a minor error in J2450 would correspond to the Fluency branch in MQM and a major error would correspond to the Accuracy branch. Nevertheless, for most purposes, the following mapping should suffice.</p>
+			<table class="tabular">
+				<tr><th>SAE J2450 issue type</th><th>MQM issue type</th><th>Note(s)</th></tr>
+				<tr><td>Wrong term</td><td><span class="generated-issue-name"><em>Terminology <a href="issues-list-2015-05-27.html#terminology" target="_blank">(<code>terminology</code></a>)</em></span></td><td></td></tr>
+				<tr><td>Omission</td><td><span class="generated-issue-name"><em>Omission <a href="issues-list-2015-05-27.html#omission" target="_blank">(<code>omission</code></a>)</em></span></td><td></td></tr>
+				<tr><td>Misspelling</td><td><span class="generated-issue-name"><em>Spelling <a href="issues-list-2015-05-27.html#spelling" target="_blank">(<code>spelling</code></a>)</em></span></td><td></td></tr>
+				<tr><td>Punctuation error</td><td><span class="generated-issue-name"><em>Typography <a href="issues-list-2015-05-27.html#typography" target="_blank">(<code>typography</code></a>)</em></span></td><td></td></tr>
+				<tr><td>Syntactic error</td><td><span class="generated-issue-name"><em>Grammar <a href="issues-list-2015-05-27.html#grammar" target="_blank">(<code>grammar</code></a>)</em></span></td><td></td></tr>
+				<tr><td>Word structure or agreement error</td><td><span class="generated-issue-name"><em>Word form <a href="issues-list-2015-05-27.html#word-form" target="_blank">(<code>word-form</code></a>)</em></span></td><td></td></tr>
+				<tr><td>Miscellaneous error</td><td><span class="generated-issue-name"><em>Other <a href="issues-list-2015-05-27.html#other" target="_blank">(<code>other</code></a>)</em></span></td><td></td></tr>
+			</table>
+		</div>		
+	</div>
+	<div>
+		<h2 id="acknowledgements">12. Acknowledgements</h2>
+		<p>Portions of this document were developed as part of the Coordination and Support Action “Preparation and Launch of a Large-scale Action for Quality Translation Technology (QTLaunchPad)”, funded by the 7th Framework Programme of the European Commission through the contract 296347. Addition work was supported by the Coordination and Support Action “Quality Translation 21 (QT21)”, funded by the EU’s Horizon 2020 research and innovation programme under grant no. 645452.</p>
+	</div>
+	<div>
+		<h2 id="history">13. Previous versions (non-normative)</h2>
+		<ul>
+			<li><a href="http://www.qt21.eu/mqm-definition/definition-2015-05-27.html">Version 0.9.0 (2015-05-27)</a></li>
+			<li><a href="http://www.qt21.eu/mqm-definition/definition-2015-01-20.html">Version 0.3.0 (2015-01-20)</a></li>
+			<li><a href="http://www.qt21.eu/mqm-definition/definition-2014-08-15.html">Version 0.2.0 (2014-08-19)</a></li>
+			<li><a href="http://www.qt21.eu/mqm-definition/definition-2014-08-15.html">Version 0.1.16 (2014-08-15)</a></li>
+			<li><a href="http://www.qt21.eu/mqm-definition/definition-2014-08-14.html">Version 0.1.15 (2014-08-14)</a></li>
+			<li><a href="http://www.qt21.eu/mqm-definition/definition-2014-06-06.html">Version 0.1.14 (2014-06-06)</a></li>
+			<li><a href="http://www.qt21.eu/mqm-definition/definition-2014-06-04.html">Version 0.1.13 (2014-06-04)</a></li>
+			<li><a href="http://www.qt21.eu/mqm-definition/definition-2014-05-28.html">Version 0.1.12 (2014-05-28)</a></li>
+			<li><a href="http://www.qt21.eu/mqm-definition/definition-2014-05-16.html">Version 0.1.11 (2014-05-16)</a></li>
+			<li><a href="http://www.qt21.eu/mqm-definition/definition-2014-04-16.html">Version 0.1.10 (2014-04-16)</a></li>
+			<li><a href="http://www.qt21.eu/mqm-definition/mqm-spec-2014-02-24.html">Version 0.1.8 (2014-02-24)</a></li>
+			<li><a href="http://www.qt21.eu/mqm-definition/mqm-spec-2014-02-19.html">Version 0.1.7 (2014-02-19)</a></li>
+			<li><a href="http://www.qt21.eu/mqm-definition/mqm-spec-2014-02-18.html">Version 0.1.6 (2014-02-18)</a></li>
+			<li><a href="http://www.qt21.eu/mqm-definition/mqm-spec-2014-02-14.html">Version 0.1.5 (2014-02-14)</a></li>
+			<li>Version 0.1 (2014-02-11) - First draft</li>
+		</ul>
+
+		<h3>Changes from version 0.9.0 to 0.9.1</h3>
+		<ul>
+			<li>Added the “none” severity level for DQF compatibility.</li>
+		</ul>
+
+
+		<h3>Changes from version 0.3.0 to 0.9.0</h3>
+		<ul>
+			<li>Note: major jump in version number reflects major changes to MQM structure.</li>
+			<li>Major revision with new list of dimensions, new scoring model, improved terms and definitions, additional issue types, revision of mappings to other metrics, etc.</li>
+			<li>Added <code>design</code> to the core for compatibility with DQF.</li>
+		</ul>
+
+
+		<h3>Changes from version 0.2.0 to 0.3.0</h3>
+		<ul>
+			<li>Old default scoring model deprecated (see new section, <a href="#old-default-values">8.2. Default severity multipliers from versions earlier than 0.3.0 (deprecated)</a>) and replaced with new default severity multipliers.</li>
+			<li>Corrections to version history</li>
+		</ul>
+
+
+		<h3>Changes from version 0.1.16 to 0.2.0</h3>
+		<ul>
+			<li>Added section 5.4. Integration with other metrics</li>
+			<li>Fixed numerous errors in linking to issue types and added back-end mechanism to ensure that issue names and IDs are always correct and that any incorrect links are apparent.</li>
+			<li>Changed core structure to reflect Style split with updated graphics</li>
+			<li>Corrected errors in TOC and section numbering</li>
+		</ul>
+
+		<h3>Changes from version 0.1.15 to 0.1.16</h3>
+		<ul>
+			<li>Changed <code>Style</code> to <code>Stylistics</code> and split <code>Style-guide</code> out to resolve problem that <code>Style</code> included both mechanical and content-related issues.</li>
+		</ul>
+		
+		<h3>Changes from version 0.1.14 to 0.1.15</h3>
+		<ul>
+			<li>Fixed section numbering for section 9</li>
+			<li>Updated section 9 to use current graphic and current Dimensions list</li>
+			<li>Added scope section and adjusted other text to match scope statement</li>
+			<li>Updated name <code>locale-violation</code> to <code>Locale-convention</code></li>
+			<li>Updated name <code>locale-applicability</code> to <code>Locale-specific-content</code></li>
+			<li>Linked to updated version of issue type list to address issue type name changes</li>
+			<li>Added link to two-page overview document</li>
+		</ul>
+
+		<h3>Changes from version 0.1.13 to 0.1.14</h3>
+		<ul>
+			<li>Made scoring metric non-normative</li>
+		</ul>
+
+		<h3>Changes from version 0.1.12 to 0.1.13</h3>
+		<ul>
+			<li>Added normative mappings to and from ITS 2.0</li>
+			<li>Clarified some points about MQM markup and its relationship to ITS 2.0 markup</li>
+		</ul>
+
+		<h3>Changes from version 0.1.11 to 0.1.12</h3>
+		<ul>
+			<li>Made usage of “quality assessment” consistent</li>
+			<li>Added explanatory note about varying quality terms</li>
+		</ul>
+
+
+		<h3>Changes from version 0.1.10 to 0.1.11</h3>
+		<ul>
+			<li>Added link to introductory presentation</li>
+		</ul>
+
+		<h3>Changes from version 0.1.8 to 0.1.10</h3>
+		<ul>
+			<li>Changed default location for files</li>
+			<li>Split issues list into separate document</li>
+			<li>Added graphical representation of MQM Core</li>
+			<li>Added more information on building metrics and types of metrics</li>
+		</ul>
+
+		<h3>Changes from version 0.1.7 to 0.1.8</h3>
+		<ul>
+			<li>Added additional issue types for TAUS DQF compatibility</li>
+			<li>Replaced hierarchy graphic to reflect latest changes</li>
+			<li>Added informative TAUS DQF and SAE J2450 mappings</li>
+		</ul>
+
+		<h3>Changes from version 0.1.6 to 0.1.7</h3>
+		<ul>
+			<li>Changed “dimension” to “parameter”</li>
+			<li>Various textual changes</li>
+			<li>Additions to Overview section</li>
+			<li>Added definition for “data category”</li>
+		</ul>
+		
+		<h3>Changes from version 0.1.5 to 0.1.6</h3>
+		<ul>
+			<li>Added error-count description</li>
+			<li>Added mqm inline elements description</li>
+			<li>Added holistic description</li>
+			<li>Added list of dimensions and description of dimensions</li>
+			<li>Various corrections</li>
+			<li>Added copyright notice and acknowledgement of QTLaunchPad</li>
+		</ul>
+		<h3>Changes from version 0.1 to 0.1.5</h3>
+		<ul>
+			<li>Added MQM graphic representation.</li>
+		</ul>
+	</div>
+</body>
+</html>
